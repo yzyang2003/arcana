@@ -98,6 +98,7 @@ export default function SpreadReadingPage() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [celebrating, setCelebrating] = useState(false);
   const streamRef = useRef(false);
+  const celebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -209,7 +210,8 @@ export default function SpreadReadingPage() {
       saveToHistory();
       // Trigger celebration particles
       setCelebrating(true);
-      setTimeout(() => setCelebrating(false), 3500);
+      if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+      celebrationTimerRef.current = setTimeout(() => setCelebrating(false), 3500);
     } catch {
       setError('AI解读暂时不可用，请稍后重试。');
       useReadingStore.setState({ aiResult: 'AI解读暂时不可用，请稍后重试。' });
@@ -232,6 +234,13 @@ export default function SpreadReadingPage() {
       behavior: 'smooth',
     });
   }, [streamText, isStreaming]);
+
+  // Cleanup celebration timer on unmount
+  useEffect(() => {
+    return () => {
+      if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+    };
+  }, []);
 
   if (!spread) {
     return <div className="flex min-h-screen items-center justify-center text-muted">牌阵不存在</div>;

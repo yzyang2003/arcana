@@ -80,9 +80,10 @@ export default function CardFanSelection({ totalCards, onSelect }: CardFanSelect
     });
 
     // Breathing micro-animation — gentle float after entrance completes
+    const breathingTweens: gsap.core.Tween[] = [];
     tl.eventCallback('onComplete', () => {
       cards.forEach((card, i) => {
-        gsap.to(card, {
+        const tween = gsap.to(card, {
           y: `+=${gsap.utils.random(-2, 2)}`,
           rotation: `+=${gsap.utils.random(-0.3, 0.3)}`,
           duration: gsap.utils.random(2.5, 4),
@@ -91,8 +92,13 @@ export default function CardFanSelection({ totalCards, onSelect }: CardFanSelect
           repeat: -1,
           delay: i * 0.05,
         });
+        breathingTweens.push(tween);
       });
     });
+
+    return () => {
+      breathingTweens.forEach(t => t.kill());
+    };
   }, { scope: containerRef });
 
   // Click

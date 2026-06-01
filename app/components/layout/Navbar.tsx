@@ -47,6 +47,7 @@ export function Navbar() {
       opacity: 1,
       duration: 0.3,
       ease: 'power2.inOut',
+      overwrite: true,
     });
   }, [pathname]);
 
