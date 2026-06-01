@@ -1,26 +1,631 @@
+/* ============================================================
+   Arcana — Global Design System
+   Tailwind CSS v4 + Custom Properties
+   ============================================================ */
+
 @import "tailwindcss";
 
+/* ============================================================
+   1. CSS Custom Properties (Design Tokens)
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Backgrounds ── */
+  --void: #050505; /* Primary background — near-black */
+  --voidDeep: #030308; /* Deepest background — scrollbars, tracks */
+  --surface: #0f1115; /* Surface layer — glass panels, cards */
+  --mystic: #1b1830; /* Mystic purple surface — card backs, deep accent */
+
+  /* ── Accent Spectrum ── */
+  --accent: #9b8cff; /* Primary accent — interactive, links, rings */
+  --accentSoft: #d4ccff; /* Soft accent — dots, text highlights, glow */
+  --accentDim: #6b5fd4; /* Dim accent — scrollbar thumbs, hover states */
+
+  /* ── Secondary Accent (Gold) ── */
+  --gold: #d4af37; /* Gold accent — ornamental, particle effects */
+  --goldDim: #b8962e; /* Dim gold — secondary states */
+
+  /* ── Text ── */
+  --frost: #e8e6f0; /* Primary text — high contrast on dark */
+  --muted: #8b8798; /* Muted text — labels, secondary info */
+  --metal: #c8c4e8; /* Metallic text — medium emphasis */
+
+  /* ── Surfaces & Borders ── */
+  --glass: rgba(15, 17, 21, 0.6); /* Glass panel background */
+  --glassSubtle: rgba(15, 17, 21, 0.35); /* Subtle glass panel */
+  --border: rgba(255, 255, 255, 0.08); /* Default border */
+  --borderGold: rgba(212, 175, 55, 0.2); /* Gold border for cards */
+  --borderViolet: rgba(138, 92, 255, 0.3); /* Violet border accents */
+
+  /* ── Easing ── */
+  --ease-mystical: cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* ============================================================
+   2. Tailwind v4 Theme Tokens
+   ============================================================ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-void: var(--void);
+  --color-void-deep: var(--voidDeep);
+  --color-surface: var(--surface);
+  --color-mystic: var(--mystic);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accentSoft);
+  --color-accent-dim: var(--accentDim);
+  --color-gold: var(--gold);
+  --color-gold-dim: var(--goldDim);
+  --color-frost: var(--frost);
+  --color-muted: var(--muted);
+  --color-metal: var(--metal);
+  --color-glass: var(--glass);
+  --color-glass-subtle: var(--glassSubtle);
+  --color-border: var(--border);
+  --color-border-gold: var(--borderGold);
+  --color-border-violet: var(--borderViolet);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================
+   3. Font Face Declarations (Cinzel Decorative)
+   ============================================================ */
+
+@font-face {
+  font-family: "Cinzel Decorative";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/cinzeldecorative/v16/daaCSScvJGqLYhG8nNt8KPPswUAPni7TTMw.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Cinzel Decorative";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/cinzeldecorative/v16/daaHSScvJGqLYhG8nNt8KPPswUAPniZoaelDQzCLlQXE.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Cinzel Decorative";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/cinzeldecorative/v16/daaHSScvJGqLYhG8nNt8KPPswUAPniZoadVnzLCLlQXE.woff2")
+    format("woff2");
+}
+
+/* ============================================================
+   4. Font Family Variables
+   ============================================================ */
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --font-display: "Cinzel Decorative", "Palatino Linotype", "Palatino",
+    Georgia, serif;
+  --font-display-alt: "Palatino Linotype", "Palatino", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono",
+    "Segoe UI Mono", monospace;
+}
+
+/* ============================================================
+   5. Global Resets & Base Styles
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--void);
+  color: var(--frost);
+  font-family: var(--font-sans);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   6. Selection Colors
+   ============================================================ */
+
+::selection {
+  background-color: rgba(155, 140, 255, 0.35);
+  color: var(--frost);
+}
+
+/* ============================================================
+   7. Focus-Visible Outline
+   ============================================================ */
+
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   8. Custom Scrollbar Styling
+   ============================================================ */
+
+/* Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--voidDeep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accentDim);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accentDim) var(--voidDeep);
+}
+
+/* ============================================================
+   9. Utility Classes — Glass Panels
+   ============================================================ */
+
+.glass-panel {
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+}
+
+.glass-panel-subtle {
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  background: var(--glassSubtle);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+}
+
+/* ============================================================
+   10. Utility Classes — Noise Overlay
+   ============================================================ */
+
+.noise-overlay {
+  position: relative;
+}
+
+.noise-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 50;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* ============================================================
+   11. Animation Keyframes
+   ============================================================ */
+
+/* Card holographic shimmer shift — 9s cycle */
+@keyframes card-back-holo-shift {
+  0% {
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: hue-rotate(30deg);
+  }
+  100% {
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg);
+  }
+}
+
+/* Card shuffle animation */
+@keyframes shuffle-card {
+  0% {
+    transform: translateY(0) rotateY(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: translateY(-18px) rotateY(90deg);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(0) rotateY(180deg);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(18px) rotateY(270deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(0) rotateY(360deg);
+    opacity: 1;
+  }
+}
+
+/* Pulse opacity */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Fade in with slight upward slide */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Shimmer background sweep */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Shooting star diagonal streak */
+@keyframes shooting-star {
+  0% {
+    transform: translate(0, 0) rotate(-45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(300px, 300px) rotate(-45deg);
+    opacity: 0;
+  }
+}
+
+/* Twinkle star twinkle */
+@keyframes twinkle {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+/* ============================================================
+   12. Animation Utility Classes
+   ============================================================ */
+
+.animate-holo {
+  animation: card-back-holo-shift 9s ease-in-out infinite;
+}
+
+.animate-shuffle {
+  animation: shuffle-card 0.6s ease-in-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out both;
+}
+
+.animate-shimmer {
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle 8s ease-in-out infinite alternate;
+}
+
+/* ============================================================
+   13. Perspective & 3D Utilities
+   ============================================================ */
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* ============================================================
+   14. Card Back Holographic Overlay
+   ============================================================ */
+
+.card-back-holo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    135deg,
+    var(--mystic) 0%,
+    var(--accentDim) 20%,
+    var(--mystic) 40%,
+    var(--accent) 60%,
+    var(--mystic) 80%,
+    var(--accentDim) 100%
+  );
+  background-size: 300% 300%;
+  animation: card-back-holo-shift 9s ease-in-out infinite;
+  opacity: 0.55;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ============================================================
+   15. Glass Button Styles
+   ============================================================ */
+
+.glass-button {
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  color: var(--frost);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-sans);
+  transition: all 200ms var(--ease-mystical);
+  cursor: pointer;
+}
+
+.glass-button:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(15, 17, 21, 0.75);
+  box-shadow: 0 0 12px rgba(155, 140, 255, 0.1);
+}
+
+.glass-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   16. Accent Button Styles
+   ============================================================ */
+
+.accent-button {
+  background: linear-gradient(135deg, var(--accentDim), var(--accent));
+  border: none;
+  border-radius: 0.75rem;
+  color: #fff;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(155, 140, 255, 0.25);
+  transition: all 200ms var(--ease-mystical);
+  cursor: pointer;
+}
+
+.accent-button:hover {
+  box-shadow: 0 6px 24px rgba(155, 140, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.accent-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(155, 140, 255, 0.2);
+}
+
+/* ============================================================
+   17. Input Field Styles
+   ============================================================ */
+
+.input-field {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.625rem 1rem;
+  color: var(--frost);
+  font-family: var(--font-sans);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 200ms var(--ease-mystical);
+}
+
+.input-field::placeholder {
+  color: var(--muted);
+}
+
+.input-field:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(155, 140, 255, 0.15);
+}
+
+.input-field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   18. Navigation Styles
+   ============================================================ */
+
+.nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  background: rgba(5, 5, 5, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-link {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  transition: color 200ms var(--ease-mystical);
+  padding: 0.5rem 0.75rem;
+}
+
+.nav-link:hover {
+  color: var(--frost);
+}
+
+.nav-link.active {
+  color: var(--accent);
+}
+
+/* ============================================================
+   19. Card Container & Flip Styles
+   ============================================================ */
+
+.card-container {
+  perspective: 800px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.card-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.8s var(--ease-mystical);
+}
+
+.card-back {
+  backface-visibility: hidden;
+  background: linear-gradient(145deg, #14102e 0%, #0e0a22 50%, #14102e 100%);
+  border: 1px solid var(--borderGold);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.card-front {
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  background: linear-gradient(170deg, #1a1440 0%, #14102e 40%, #0e0a22 100%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.card-container:hover .card-inner {
+  box-shadow:
+    0 0 24px rgba(212, 175, 55, 0.45),
+    0 0 60px rgba(212, 175, 55, 0.15);
+}
+
+/* ============================================================
+   20. Reversed Card Badge
+   ============================================================ */
+
+.reversed-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border-radius: 9999px;
+  padding: 2px 6px;
+  font-size: 8px;
+  background: rgba(138, 92, 255, 0.25);
+  border: 1px solid var(--borderViolet);
+  color: #a89dc8;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ============================================================
+   21. Star Field Background (CSS Only)
+   ============================================================ */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.8) 50%, transparent 50%),
+    radial-gradient(1px 1px at 30% 65%, rgba(255, 255, 255, 0.6) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 55% 15%, rgba(212, 175, 55, 0.7) 50%, transparent 50%),
+    radial-gradient(1px 1px at 70% 40%, rgba(255, 255, 255, 0.5) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 85% 70%, rgba(138, 92, 255, 0.6) 50%, transparent 50%),
+    radial-gradient(1px 1px at 45% 85%, rgba(255, 255, 255, 0.7) 50%, transparent 50%),
+    radial-gradient(1px 1px at 20% 50%, rgba(255, 255, 255, 0.4) 50%, transparent 50%),
+    radial-gradient(1.2px 1.2px at 90% 10%, rgba(212, 175, 55, 0.5) 50%, transparent 50%),
+    radial-gradient(1px 1px at 60% 55%, rgba(255, 255, 255, 0.6) 50%, transparent 50%),
+    radial-gradient(1px 1px at 15% 90%, rgba(138, 92, 255, 0.4) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 40% 30%, rgba(255, 255, 255, 0.5) 50%, transparent 50%),
+    radial-gradient(1px 1px at 75% 80%, rgba(255, 255, 255, 0.7) 50%, transparent 50%);
+  animation: twinkle 8s ease-in-out infinite alternate;
+}
+
+/* ============================================================
+   P1-9: Page Transitions
+   ============================================================ */
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+main {
+  animation: page-enter 0.4s ease-out both;
+}
+
+/* ============================================================
+   P1-11: Skeleton Loading
+   ============================================================ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(155, 140, 255, 0.05) 25%,
+    rgba(155, 140, 255, 0.12) 50%,
+    rgba(155, 140, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+.skeleton-card {
+  width: 100%;
+  aspect-ratio: 2/3;
+}
+
+.skeleton-text {
+  height: 0.75rem;
+  width: 60%;
+}
+
+/* ============================================================
+   P0-1 helper: card-hover-glow shared class
+   ============================================================ */
+
+.card-hover-glow {
+  filter: drop-shadow(0 0 16px rgba(155,140,255,0.7)) brightness(1.05) !important;
 }

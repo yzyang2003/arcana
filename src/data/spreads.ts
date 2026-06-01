@@ -1,0 +1,387 @@
+// 塔罗牌牌阵布局数据
+// Tarot Spread Layouts Data
+
+export interface SpreadPosition {
+  index: number;
+  nameZh: string;
+  nameEn: string;
+  description: string;
+  x: number; // percentage 0-100
+  y: number; // percentage 0-100
+  rotation: number; // degrees
+  zIndex: number;
+}
+
+export interface Spread {
+  id: string;
+  nameZh: string;
+  nameEn: string;
+  description: string;
+  cardCount: number;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  positions: SpreadPosition[];
+}
+
+export const spreads: Spread[] = [
+  // 1. 单牌阵 - Single Card
+  {
+    id: 'single-card',
+    nameZh: '单牌阵',
+    nameEn: 'Single Card',
+    description: '最简单的牌阵，适合日常快速占卜。抽取一张牌，揭示当下的能量和指引。',
+    cardCount: 1,
+    difficulty: 'beginner',
+    positions: [
+      {
+        index: 0,
+        nameZh: '核心指引',
+        nameEn: 'Core Guidance',
+        description: '当下的核心能量和指引信息',
+        x: 50,
+        y: 50,
+        rotation: 0,
+        zIndex: 1,
+      },
+    ],
+  },
+
+  // 2. 三牌阵 - 过去-现在-未来 (水平)
+  {
+    id: 'three-card-ppf',
+    nameZh: '时间之流三牌阵',
+    nameEn: 'Past-Present-Future',
+    description: '经典的时间线牌阵，揭示事情的过去、现在和未来发展趋势。水平排列，直观展示时间流动。',
+    cardCount: 3,
+    difficulty: 'beginner',
+    positions: [
+      {
+        index: 0,
+        nameZh: '过去',
+        nameEn: 'Past',
+        description: '影响当前情况的过去事件或能量',
+        x: 25,
+        y: 50,
+        rotation: 0,
+        zIndex: 1,
+      },
+      {
+        index: 1,
+        nameZh: '现在',
+        nameEn: 'Present',
+        description: '当前的核心状况和能量',
+        x: 50,
+        y: 50,
+        rotation: 0,
+        zIndex: 2,
+      },
+      {
+        index: 2,
+        nameZh: '未来',
+        nameEn: 'Future',
+        description: '事情可能的发展方向和结果',
+        x: 75,
+        y: 50,
+        rotation: 0,
+        zIndex: 3,
+      },
+    ],
+  },
+
+  // 3. 三牌阵 - 身心灵 (垂直)
+  {
+    id: 'three-card-mbs',
+    nameZh: '身心灵三牌阵',
+    nameEn: 'Mind-Body-Spirit',
+    description: '从三个层面解读你的状况：思想、身体和灵性。垂直排列，象征从物质到精神的层次。',
+    cardCount: 3,
+    difficulty: 'beginner',
+    positions: [
+      {
+        index: 0,
+        nameZh: '思想',
+        nameEn: 'Mind',
+        description: '你的思维模式、想法和理性分析',
+        x: 50,
+        y: 25,
+        rotation: 0,
+        zIndex: 3,
+      },
+      {
+        index: 1,
+        nameZh: '身体',
+        nameEn: 'Body',
+        description: '你的物质状况、健康和行动力',
+        x: 50,
+        y: 50,
+        rotation: 0,
+        zIndex: 2,
+      },
+      {
+        index: 2,
+        nameZh: '灵性',
+        nameEn: 'Spirit',
+        description: '你的直觉、内在智慧和灵性成长',
+        x: 50,
+        y: 75,
+        rotation: 0,
+        zIndex: 1,
+      },
+    ],
+  },
+
+  // 4. 凯尔特十字牌阵
+  {
+    id: 'celtic-cross',
+    nameZh: '凯尔特十字牌阵',
+    nameEn: 'Celtic Cross',
+    description: '最经典、最全面的塔罗牌阵。由10张牌组成，深入分析问题的各个方面，包括潜意识、意识、过去、未来、自我、环境、希望与恐惧、最终结果等。',
+    cardCount: 10,
+    difficulty: 'advanced',
+    positions: [
+      {
+        index: 0,
+        nameZh: '现状',
+        nameEn: 'Present',
+        description: '当前的核心状况和问题的本质',
+        x: 42,
+        y: 50,
+        rotation: 0,
+        zIndex: 1,
+      },
+      {
+        index: 1,
+        nameZh: '障碍',
+        nameEn: 'Challenge',
+        description: '当前面临的障碍或交叉影响',
+        x: 42,
+        y: 50,
+        rotation: 90,
+        zIndex: 2,
+      },
+      {
+        index: 2,
+        nameZh: '潜意识',
+        nameEn: 'Subconscious',
+        description: '影响情况的潜意识因素或根源',
+        x: 42,
+        y: 75,
+        rotation: 0,
+        zIndex: 3,
+      },
+      {
+        index: 3,
+        nameZh: '过去',
+        nameEn: 'Past',
+        description: '近期的过去或影响当前的过去事件',
+        x: 20,
+        y: 50,
+        rotation: 0,
+        zIndex: 4,
+      },
+      {
+        index: 4,
+        nameZh: '可能',
+        nameEn: 'Possible',
+        description: '最近可能发生的事情',
+        x: 42,
+        y: 25,
+        rotation: 0,
+        zIndex: 5,
+      },
+      {
+        index: 5,
+        nameZh: '近未来',
+        nameEn: 'Near Future',
+        description: '即将到来的变化和影响',
+        x: 64,
+        y: 50,
+        rotation: 0,
+        zIndex: 6,
+      },
+      {
+        index: 6,
+        nameZh: '自我认知',
+        nameEn: 'Self',
+        description: '你对这个情况的态度和自我认知',
+        x: 80,
+        y: 80,
+        rotation: 0,
+        zIndex: 7,
+      },
+      {
+        index: 7,
+        nameZh: '外在环境',
+        nameEn: 'Environment',
+        description: '外在环境、他人对情况的影响',
+        x: 80,
+        y: 60,
+        rotation: 0,
+        zIndex: 8,
+      },
+      {
+        index: 8,
+        nameZh: '希望与恐惧',
+        nameEn: 'Hopes & Fears',
+        description: '你的希望或恐惧，对结果的期待',
+        x: 80,
+        y: 40,
+        rotation: 0,
+        zIndex: 9,
+      },
+      {
+        index: 9,
+        nameZh: '最终结果',
+        nameEn: 'Outcome',
+        description: '根据当前能量推断的最终结果',
+        x: 80,
+        y: 20,
+        rotation: 0,
+        zIndex: 10,
+      },
+    ],
+  },
+
+  // 5. 马蹄形牌阵
+  {
+    id: 'horseshoe',
+    nameZh: '马蹄形牌阵',
+    nameEn: 'Horseshoe',
+    description: '7张牌组成U形（马蹄形）布局，从左到右阅读。揭示过去的根源、当前状况、未来趋势，以及影响情况的各种因素。',
+    cardCount: 7,
+    difficulty: 'intermediate',
+    positions: [
+      {
+        index: 0,
+        nameZh: '过去',
+        nameEn: 'Past',
+        description: '影响当前情况的过去事件',
+        x: 20,
+        y: 60,
+        rotation: 0,
+        zIndex: 1,
+      },
+      {
+        index: 1,
+        nameZh: '过去的影响',
+        nameEn: 'Past Influence',
+        description: '过去持续影响当前的深层因素',
+        x: 25,
+        y: 35,
+        rotation: 0,
+        zIndex: 2,
+      },
+      {
+        index: 2,
+        nameZh: '现在',
+        nameEn: 'Present',
+        description: '当前的核心状况',
+        x: 40,
+        y: 20,
+        rotation: 0,
+        zIndex: 3,
+      },
+      {
+        index: 3,
+        nameZh: '未来',
+        nameEn: 'Future',
+        description: '事情即将发展的方向',
+        x: 60,
+        y: 20,
+        rotation: 0,
+        zIndex: 4,
+      },
+      {
+        index: 4,
+        nameZh: '近未来',
+        nameEn: 'Near Future',
+        description: '即将发生的事件',
+        x: 75,
+        y: 35,
+        rotation: 0,
+        zIndex: 5,
+      },
+      {
+        index: 5,
+        nameZh: '行动建议',
+        nameEn: 'Advice',
+        description: '你应该采取的行动和态度',
+        x: 80,
+        y: 60,
+        rotation: 0,
+        zIndex: 6,
+      },
+      {
+        index: 6,
+        nameZh: '最终结果',
+        nameEn: 'Outcome',
+        description: '根据当前能量推断的最终结果',
+        x: 50,
+        y: 80,
+        rotation: 0,
+        zIndex: 7,
+      },
+    ],
+  },
+
+  // 6. 关系牌阵
+  {
+    id: 'relationship',
+    nameZh: '关系牌阵',
+    nameEn: 'Relationship',
+    description: '5张牌组成十字形，专门用于分析两人之间的关系。揭示双方的立场、关系基础、面临的挑战，以及关系的走向。',
+    cardCount: 5,
+    difficulty: 'intermediate',
+    positions: [
+      {
+        index: 0,
+        nameZh: '你',
+        nameEn: 'You',
+        description: '你在关系中的位置和感受',
+        x: 50,
+        y: 30,
+        rotation: 0,
+        zIndex: 1,
+      },
+      {
+        index: 1,
+        nameZh: '对方',
+        nameEn: 'Partner',
+        description: '对方在关系中的位置和感受',
+        x: 50,
+        y: 70,
+        rotation: 0,
+        zIndex: 2,
+      },
+      {
+        index: 2,
+        nameZh: '关系基础',
+        nameEn: 'Foundation',
+        description: '这段关系的基础和根源',
+        x: 50,
+        y: 50,
+        rotation: 0,
+        zIndex: 3,
+      },
+      {
+        index: 3,
+        nameZh: '挑战',
+        nameEn: 'Challenge',
+        description: '关系中面临的挑战和障碍',
+        x: 30,
+        y: 50,
+        rotation: 0,
+        zIndex: 4,
+      },
+      {
+        index: 4,
+        nameZh: '走向',
+        nameEn: 'Outcome',
+        description: '关系可能的发展方向和结果',
+        x: 70,
+        y: 50,
+        rotation: 0,
+        zIndex: 5,
+      },
+    ],
+  },
+];
