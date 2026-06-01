@@ -55,7 +55,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2 group">
             <div className="w-2 h-2 rounded-full bg-accent group-hover:scale-125 transition-transform" />
             <span className="font-display-alt text-sm tracking-[0.2em] text-frost">
-              Arcana
+              <span className="gold-shimmer">Arcana</span>
             </span>
           </Link>
 

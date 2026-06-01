@@ -153,7 +153,7 @@ export default function Home() {
           }}
         >
           <span className="title-line">在静默中</span>
-          <span className="title-line text-accent-soft">遇见答案</span>
+          <span className="title-line gold-shimmer">遇见答案</span>
         </h1>
 
         {/* Subtitle */}

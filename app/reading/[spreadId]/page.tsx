@@ -341,19 +341,30 @@ export default function SpreadReadingPage() {
                 <>
                   <div
                     ref={textRef}
-                    className="max-w-none text-sm leading-relaxed text-frost/90 whitespace-pre-wrap"
+                    className="max-w-none text-sm leading-relaxed text-frost/90"
                     style={{ maxHeight: '35vh', overflowY: 'auto' }}
                   >
-                    {streamText || (status === 'interpreting' && (
-                      <span className="inline-flex items-center gap-2 text-muted">
-                        <span className="animate-pulse">正在解读中</span>
-                        <span className="flex gap-1">
-                          <span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span>
-                          <span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span>
-                          <span className="animate-bounce" style={{ animationDelay: '300ms' }}>.</span>
+                    {streamText ? (
+                      <>
+                        {streamText.split('\n').map((line, i) => (
+                          <div key={i} className="typewriter-line">
+                            {line || '\u00A0'}
+                          </div>
+                        ))}
+                        {isStreaming && <span className="streaming-cursor" />}
+                      </>
+                    ) : (
+                      status === 'interpreting' && (
+                        <span className="inline-flex items-center gap-2 text-muted">
+                          <span className="animate-pulse">正在解读中</span>
+                          <span className="flex gap-1">
+                            <span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span>
+                            <span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span>
+                            <span className="animate-bounce" style={{ animationDelay: '300ms' }}>.</span>
+                          </span>
                         </span>
-                      </span>
-                    ))}
+                      )
+                    )}
                   </div>
                   {status === 'complete' && (
                     <div className="mt-4 flex gap-3">
