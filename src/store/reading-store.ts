@@ -101,6 +101,8 @@ export const useReadingStore = create<ReadingStore>()(
       revealCard: (positionIndex: number) => {
         const { drawnCards, spread } = get();
         if (!spread) return;
+        const card = drawnCards.find((c) => c.positionIndex === positionIndex);
+        if (!card || card.revealed) return; // already revealed
         const updated = drawnCards.map((c) =>
           c.positionIndex === positionIndex ? { ...c, revealed: true } : c,
         );

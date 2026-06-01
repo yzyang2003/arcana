@@ -235,7 +235,7 @@ export default function SpreadReadingPage() {
   const revealedCount = drawnCards.filter((c) => c.revealed).length;
 
   return (
-    <div className="relative min-h-screen px-4 py-20">
+    <div className="relative min-h-screen px-4 py-24">
       {/* IDLE — position preview */}
       {status === 'idle' && (
         <div ref={containerRef} className="mx-auto max-w-3xl text-center">

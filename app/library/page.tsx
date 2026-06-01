@@ -47,7 +47,7 @@ export default function LibraryPage() {
       { opacity: 0, scale: 0.9 },
       { opacity: 1, scale: 1, duration: 0.3, stagger: 0.02, ease: 'power3.out' }
     );
-  }, { scope: containerRef, dependencies: [filtered.length] });
+  }, { scope: containerRef, dependencies: [filter, search] });
 
   return (
     <div ref={containerRef} className="relative min-h-screen px-4 py-24 sm:px-6">
@@ -118,6 +118,9 @@ function DetailModal({ detail, onClose }: { detail: TarotCard; onClose: () => vo
     >
       <div
         ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`查看${detail.nameZh}详情`}
         className="glass-panel max-w-lg w-full p-6"
         style={{ opacity: 0, willChange: 'transform' }}
         onClick={(e) => e.stopPropagation()}

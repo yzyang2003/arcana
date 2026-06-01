@@ -3,18 +3,9 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Flip } from 'gsap/Flip';
 import { SplitText } from 'gsap/SplitText';
-import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-import { Draggable } from 'gsap/Draggable';
-import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 
-gsap.registerPlugin(
-  useGSAP, ScrollTrigger, Flip, SplitText,
-  ScrambleTextPlugin, Draggable, MotionPathPlugin, ScrollToPlugin,
-);
+gsap.registerPlugin(useGSAP, SplitText);
 
 gsap.defaults({ duration: 0.6, ease: 'power2.out' });
 

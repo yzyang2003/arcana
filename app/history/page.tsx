@@ -9,7 +9,8 @@ import CardBack from '@/app/components/tarot/CardBack';
 
 export default function HistoryPage() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { history, clearHistory } = useReadingStore();
+  const history = useReadingStore((s) => s.history);
+  const clearHistory = useReadingStore((s) => s.clearHistory);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const panelRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -180,6 +181,9 @@ function ConfirmDialog({ onClose, onConfirm }: { onClose: () => void; onConfirm:
     >
       <div
         ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="确认清空历史记录"
         className="glass-panel p-6 text-center"
         style={{ opacity: 0, willChange: 'transform' }}
         onClick={(e) => e.stopPropagation()}
