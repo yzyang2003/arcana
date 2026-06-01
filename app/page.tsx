@@ -12,6 +12,7 @@ gsap.registerPlugin(SplitText);
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     if (!containerRef.current) return;
@@ -192,8 +193,28 @@ export default function Home() {
           在这里，你与自己的直觉对话。
         </p>
 
-        {/* CTA Button */}
-        <div className="cta-button">
+        {/* CTA Button — magnetic attract + elastic snap */}
+        <div
+          className="cta-button"
+          ref={ctaRef}
+          onMouseMove={(e) => {
+            if (!ctaRef.current) return;
+            const rect = ctaRef.current.getBoundingClientRect();
+            const dx = e.clientX - (rect.left + rect.width / 2);
+            const dy = e.clientY - (rect.top + rect.height / 2);
+            gsap.to(ctaRef.current, {
+              x: dx * 0.15, y: dy * 0.15,
+              duration: 0.3, ease: 'power2.out',
+            });
+          }}
+          onMouseLeave={() => {
+            if (!ctaRef.current) return;
+            gsap.to(ctaRef.current, {
+              x: 0, y: 0,
+              duration: 0.6, ease: 'elastic.out(1, 0.3)',
+            });
+          }}
+        >
           <Link
             href="/reading"
             className="glass-panel group relative inline-flex items-center gap-3 px-8 py-3 text-sm font-medium tracking-wider text-frost transition-all duration-300 hover:border-accent/40 hover:shadow-[0_0_32px_rgba(155,140,255,0.18)] sm:px-10 sm:py-4 sm:text-base"

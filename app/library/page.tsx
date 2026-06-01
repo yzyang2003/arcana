@@ -51,6 +51,14 @@ export default function LibraryPage() {
 
   return (
     <div ref={containerRef} className="relative min-h-screen px-4 py-24 sm:px-6">
+      {/* Page ambient — deep purple-blue atmosphere */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0"
+        style={{
+          background: 'radial-gradient(ellipse 80% 50% at 50% 50%, rgba(60,40,120,0.04) 0%, transparent 70%)',
+        }}
+      />
       <div className="mx-auto max-w-5xl">
         <div
           className="library-header mb-8 text-center"

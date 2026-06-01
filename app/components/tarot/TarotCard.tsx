@@ -41,6 +41,7 @@ export default function TarotCard({
   const raysRef = useRef<HTMLDivElement>(null);
   const borderRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLParagraphElement>(null);
+  const peekRef = useRef<HTMLDivElement>(null);
   const prevRevealed = useRef(isRevealed);
   const tiltXTo = useRef<gsap.QuickToFunc | null>(null);
   const tiltYTo = useRef<gsap.QuickToFunc | null>(null);
@@ -108,11 +109,17 @@ export default function TarotCard({
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     tiltXTo.current(x * 25);
     tiltYTo.current(-y * 20);
+    // Peek edge glow — shows gold highlight on the tilted side
+    if (peekRef.current) {
+      peekRef.current.style.opacity = '1';
+      peekRef.current.style.background = `linear-gradient(${90 + x * 60}deg, transparent 30%, rgba(212,175,55,0.15) 70%, rgba(212,175,55,0.3) 100%)`;
+    }
   }, [isRevealed]);
 
   const handleMouseLeave = useCallback(() => {
     tiltXTo.current?.(0);
     tiltYTo.current?.(0);
+    if (peekRef.current) peekRef.current.style.opacity = '0';
   }, []);
 
   return (
@@ -162,6 +169,12 @@ export default function TarotCard({
           opacity: 0,
         }}
       />
+      {/* Peek edge glow — gold highlight on hover tilt */}
+      <div
+        ref={peekRef}
+        className="absolute inset-0 pointer-events-none z-20 rounded-lg"
+        style={{ opacity: 0, transition: 'opacity 0.2s ease' }}
+      />
       <div ref={innerRef} className="w-full h-full relative" style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}>
         <div className="absolute inset-0 w-full h-full" style={{ backfaceVisibility: 'hidden' }}>
           <CardBack size={size} />
@@ -174,6 +187,14 @@ export default function TarotCard({
             <Image src={card.image} alt={card.nameEn} fill
               className={`object-cover transition-transform duration-500 ${isReversed ? 'rotate-180 scale-110' : ''}`}
               sizes={`${width}px`} />
+            {/* Front holographic sheen — subtle light reflection */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, transparent 0%, rgba(212,175,55,0.06) 25%, transparent 45%, rgba(155,140,255,0.05) 65%, transparent 85%)',
+                mixBlendMode: 'screen',
+              }}
+            />
             {isReversed && (
               <div className="absolute top-2 right-2 bg-red-600/90 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded font-bold shadow-md">REVERSED</div>
             )}

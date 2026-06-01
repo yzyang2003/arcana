@@ -64,6 +64,14 @@ export default function ReadingPage() {
 
   return (
     <div ref={containerRef} className="relative min-h-screen px-4 py-24 sm:px-6">
+      {/* Page ambient — warm candlelight glow from bottom */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0"
+        style={{
+          background: 'radial-gradient(ellipse 70% 30% at 50% 100%, rgba(212,175,55,0.03) 0%, transparent 70%)',
+        }}
+      />
       <div className="mx-auto max-w-4xl">
         {/* 标题 */}
         <div

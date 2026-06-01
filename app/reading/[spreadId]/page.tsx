@@ -329,7 +329,7 @@ export default function SpreadReadingPage() {
 
           {/* AI reading — with SplitText heading animation */}
           {(status === 'interpreting' || status === 'complete' || status === 'error') && (
-            <div ref={panelRef} className="glass-panel-glow mx-auto mt-6 max-w-3xl p-5">
+            <div ref={panelRef} className="glass-panel-glow glass-dispersion mx-auto mt-6 max-w-3xl p-5">
               <p className="reading-heading mb-3 font-display-alt text-sm tracking-wider text-accent-soft/80">
                 ✦ AI 解读
               </p>

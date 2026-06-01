@@ -81,6 +81,14 @@ export default function DailyPage() {
 
   return (
     <div ref={containerRef} className="relative flex min-h-screen flex-col items-center justify-center px-4 py-24">
+      {/* Page ambient — warm morning light from top */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0"
+        style={{
+          background: 'radial-gradient(ellipse 60% 25% at 50% 0%, rgba(212,175,55,0.04) 0%, transparent 70%)',
+        }}
+      />
       <div
         className="daily-header text-center"
         style={{ opacity: 0, willChange: 'transform' }}
