@@ -86,6 +86,25 @@ export default function Particles() {
       const h = canvas!.height / dpr;
       ctx!.clearRect(0, 0, w, h);
       const t = Date.now() * 0.001;
+      // --- Nebula layer — slow-drifting soft gradients for depth ---
+      const nebulae = [
+        { baseX: w * 0.25, baseY: h * 0.35, r: w * 0.18, color: [100, 60, 180], speedX: 0.06, speedY: 0.04 },
+        { baseX: w * 0.7, baseY: h * 0.25, r: w * 0.14, color: [50, 80, 160], speedX: 0.04, speedY: 0.07 },
+        { baseX: w * 0.5, baseY: h * 0.7, r: w * 0.12, color: [80, 40, 120], speedX: 0.05, speedY: 0.03 },
+      ];
+      for (const n of nebulae) {
+        const ox = Math.sin(t * n.speedX) * 30;
+        const oy = Math.cos(t * n.speedY) * 20;
+        const grad = ctx!.createRadialGradient(
+          n.baseX + ox, n.baseY + oy, 0,
+          n.baseX + ox, n.baseY + oy, n.r
+        );
+        grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.025)`);
+        grad.addColorStop(0.5, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.012)`);
+        grad.addColorStop(1, 'transparent');
+        ctx!.fillStyle = grad;
+        ctx!.fillRect(0, 0, w, h);
+      }
 
       // --- Particles ---
       for (const p of particles) {
@@ -93,9 +112,18 @@ export default function Particles() {
         const dy = p.y - mouseY;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < 120) {
-          const force = ((120 - dist) / 120) * 0.8;
-          p.vx += (dx / dist) * force;
-          p.vy += (dy / dist) * force;
+          const proximity = (120 - dist) / 120; // 0 at edge, 1 at center
+          if (proximity > 0.6) {
+            // Close range: repel
+            const force = proximity * 0.9;
+            p.vx += (dx / dist) * force;
+            p.vy += (dy / dist) * force;
+          } else {
+            // Far range: attract (gentle pull toward cursor)
+            const force = proximity * 0.15;
+            p.vx -= (dx / dist) * force;
+            p.vy -= (dy / dist) * force;
+          }
         }
         p.opacity = p.baseOpacity * (0.5 + 0.5 * Math.sin(t * 0.8 + p.phase));
         p.x += p.vx; p.y += p.vy;

@@ -79,6 +79,16 @@ export default function Home() {
       y: '+=4', rotation: '+=0.5',
       duration: 3.5, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 0.5,
     });
+    // Ambient light breathing — purple and gold layers pulse slowly
+    gsap.to('.ambient-1', {
+      opacity: 1, scale: 1.12,
+      duration: 6, ease: 'sine.inOut', yoyo: true, repeat: -1,
+    });
+    gsap.to('.ambient-2', {
+      opacity: 1, scale: 0.9,
+      duration: 8, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2,
+    });
+
 
     // P1-7: Mouse tilt on card pair
     const cardPair = containerRef.current.querySelector('.card-pair');
@@ -121,6 +131,25 @@ export default function Home() {
         style={{
           background:
             'radial-gradient(ellipse 60% 45% at 50% 42%, rgba(155,140,255,0.06) 0%, transparent 70%)',
+        }}
+      />
+      {/* Ambient light layers — GSAP-animated breathing */}
+      <div
+        aria-hidden="true"
+        className="ambient-1 pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 50% 40% at 45% 50%, rgba(155,140,255,0.05) 0%, transparent 70%)',
+          opacity: 0,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="ambient-2 pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 40% 35% at 55% 45%, rgba(212,175,55,0.04) 0%, transparent 70%)',
+          opacity: 0,
         }}
       />
 

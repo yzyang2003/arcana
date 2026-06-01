@@ -39,17 +39,24 @@ export default function ShuffleDeck({ duration = 2500, onComplete, cardCount = 7
 
     // === ACT 1: Explosive scatter from center ===
     tl.fromTo(cards, {
-      x: 0, y: 0, rotation: 0, rotationX: 0, scale: 0.5, autoAlpha: 0,
+      x: 0, y: 0, rotation: 0, rotationX: 0, scale: 0.5, autoAlpha: 0, filter: 'blur(0px)',
     }, {
       x: (i) => cardPositions[i].x,
       y: (i) => cardPositions[i].y,
       rotation: (i) => cardPositions[i].rotate,
       rotationX: (i) => cardPositions[i].rotationX,
-      scale: 0.85, autoAlpha: 1,
+      scale: 0.85, autoAlpha: 1, filter: 'blur(2px)',
       duration: 0.5,
       stagger: { each: 0.008, from: 'random' },
       ease: 'elastic.out(1, 0.5)',
       onStart: () => playWhoosh({ duration: 0.5, pitch: 700 }),
+    });
+
+    // Motion blur clear — sharp focus after scatter
+    tl.to(cards, {
+      filter: 'blur(0px)',
+      duration: 0.2,
+      stagger: { each: 0.002, from: 'random' },
     });
 
     // === ACT 2: Hovering / floating ===

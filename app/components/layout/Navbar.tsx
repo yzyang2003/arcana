@@ -2,9 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
@@ -20,13 +19,46 @@ export function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+  const linksContainerRef = useRef<HTMLDivElement>(null);
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  // Sliding indicator — animate to active link position
+  const updateIndicator = useCallback(() => {
+    const container = linksContainerRef.current;
+    const indicator = indicatorRef.current;
+    if (!container || !indicator) return;
+
+    const activeIndex = navLinks.findIndex(
+      (l) => pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href))
+    );
+    const activeEl = linkRefs.current[activeIndex];
+    if (!activeEl) {
+      gsap.to(indicator, { opacity: 0, duration: 0.2 });
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const linkRect = activeEl.getBoundingClientRect();
+
+    gsap.to(indicator, {
+      x: linkRect.left - containerRect.left,
+      width: linkRect.width,
+      opacity: 1,
+      duration: 0.3,
+      ease: 'power2.inOut',
+    });
+  }, [pathname]);
+
+  useEffect(() => {
+    updateIndicator();
+  }, [updateIndicator]);
 
   // Animate mobile menu open/close
   useEffect(() => {
     if (!mobileMenuRef.current) return;
 
     if (mobileOpen) {
-      // Show the menu element first, then animate in
       mobileMenuRef.current.style.display = 'block';
       gsap.fromTo(
         mobileMenuRef.current,
@@ -59,14 +91,21 @@ export function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
+          <div ref={linksContainerRef} className="hidden md:flex items-center gap-1 relative">
+            {/* Sliding indicator pill */}
+            <div
+              ref={indicatorRef}
+              className="absolute top-0 h-full rounded-full bg-accent/15 pointer-events-none"
+              style={{ opacity: 0, width: 0 }}
+            />
+            {navLinks.map((link, i) => (
               <Link
                 key={link.href}
+                ref={(el) => { linkRefs.current[i] = el; }}
                 href={link.href}
-                className={`px-3 py-1.5 rounded-full text-xs tracking-wider transition-colors duration-200 ${
+                className={`relative z-10 px-3 py-1.5 rounded-full text-xs tracking-wider transition-colors duration-200 ${
                   pathname === link.href
-                    ? 'bg-accent/15 text-accent'
+                    ? 'text-accent'
                     : 'text-muted hover:text-frost hover:bg-white/5'
                 }`}
               >

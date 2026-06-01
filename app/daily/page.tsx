@@ -52,6 +52,27 @@ export default function DailyPage() {
   const handleReveal = () => {
     setRevealed(true);
     revealTimerRef.current = setTimeout(() => setRevealDetails(true), 300);
+    // Sparkle burst — 12 particles radiate from card center
+    const container = containerRef.current;
+    if (container) {
+      const sparkles = container.querySelectorAll('.daily-sparkle');
+      sparkles.forEach((s, i) => {
+        const angle = (i / 12) * Math.PI * 2;
+        const dist = 40 + Math.random() * 30;
+        gsap.fromTo(s,
+          { x: 0, y: 0, scale: 0, opacity: 1 },
+          {
+            x: Math.cos(angle) * dist,
+            y: Math.sin(angle) * dist,
+            scale: 1,
+            opacity: 0,
+            duration: 0.6 + Math.random() * 0.3,
+            ease: 'power2.out',
+            delay: i * 0.025,
+          }
+        );
+      });
+    }
   };
 
   useEffect(() => {
@@ -69,7 +90,27 @@ export default function DailyPage() {
         <p className="mt-1 text-sm text-muted">今天宇宙想对你说的话</p>
       </div>
 
-      <div className="daily-card cursor-pointer mt-10" style={{ opacity: 0, willChange: 'transform', perspective: '1000px' }} onClick={() => !revealed && handleReveal()}>
+      <div className="daily-card relative cursor-pointer mt-10" style={{ opacity: 0, willChange: 'transform', perspective: '1000px' }} onClick={() => !revealed && handleReveal()}>
+        {/* Sparkle burst container — centered on card */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+          {Array.from({ length: 12 }, (_, i) => (
+            <div
+              key={i}
+              className="daily-sparkle absolute"
+              style={{
+                width: 4, height: 4,
+                borderRadius: '50%',
+                background: i % 3 === 0
+                  ? 'rgba(212,175,55,0.9)'
+                  : 'rgba(155,140,255,0.8)',
+                boxShadow: i % 3 === 0
+                  ? '0 0 6px rgba(212,175,55,0.6)'
+                  : '0 0 6px rgba(155,140,255,0.5)',
+                opacity: 0,
+              }}
+            />
+          ))}
+        </div>
         <TarotCard card={card} isRevealed={revealed} isReversed={reversed} size="lg" />
       </div>
 

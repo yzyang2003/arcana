@@ -12,6 +12,7 @@ import CardBack from '@/app/components/tarot/CardBack';
 import ShuffleDeck from '@/app/components/tarot/ShuffleDeck';
 import TarotCard from '@/app/components/tarot/TarotCard';
 import CardFanSelection from '@/app/components/tarot/CardFanSelection';
+import CelebrationParticles from '@/app/components/effects/CelebrationParticles';
 import { playReveal } from '@/src/lib/sounds';
 
 gsap.registerPlugin(SplitText);
@@ -95,6 +96,7 @@ export default function SpreadReadingPage() {
 
   const [streamText, setStreamText] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
+  const [celebrating, setCelebrating] = useState(false);
   const streamRef = useRef(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -205,6 +207,9 @@ export default function SpreadReadingPage() {
       }
       setAIResult(fullText || '解读生成完成。');
       saveToHistory();
+      // Trigger celebration particles
+      setCelebrating(true);
+      setTimeout(() => setCelebrating(false), 3500);
     } catch {
       setError('AI解读暂时不可用，请稍后重试。');
       useReadingStore.setState({ aiResult: 'AI解读暂时不可用，请稍后重试。' });
@@ -236,6 +241,7 @@ export default function SpreadReadingPage() {
 
   return (
     <div className="relative h-[100dvh] overflow-hidden px-4 pt-24">
+      <CelebrationParticles active={celebrating} />
       {/* IDLE — position preview */}
       {status === 'idle' && (
         <div ref={containerRef} className="mx-auto max-w-3xl text-center">
