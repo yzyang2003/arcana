@@ -78,6 +78,21 @@ export default function CardFanSelection({ totalCards, onSelect }: CardFanSelect
         duration: 0.6, ease: 'back.out(1.2)',
       }, 0.008 * i);
     });
+
+    // Breathing micro-animation — gentle float after entrance completes
+    tl.eventCallback('onComplete', () => {
+      cards.forEach((card, i) => {
+        gsap.to(card, {
+          y: `+=${gsap.utils.random(-2, 2)}`,
+          rotation: `+=${gsap.utils.random(-0.3, 0.3)}`,
+          duration: gsap.utils.random(2.5, 4),
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1,
+          delay: i * 0.05,
+        });
+      });
+    });
   }, { scope: containerRef });
 
   // Click

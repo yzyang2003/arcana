@@ -58,6 +58,23 @@ function CornerFlourish({
 
 export default function CardBack({ className = '', size = 'md', animated = true, minimal = false, parallax = false }: CardBackProps) {
   const wrapRef = React.useRef<HTMLDivElement>(null);
+  const holoRef = React.useRef<HTMLDivElement>(null);
+
+  // Holographic refraction — ambient slow rotation when not minimal
+  React.useEffect(() => {
+    if (minimal || !holoRef.current) return;
+    // Slow continuous rotation for ambient holo effect
+    const el = holoRef.current;
+    let angle = 0;
+    let animId: number;
+    const rotate = () => {
+      angle += 0.3; // ~120s per full rotation
+      el.style.setProperty('--holo-angle', `${angle}deg`);
+      animId = requestAnimationFrame(rotate);
+    };
+    animId = requestAnimationFrame(rotate);
+    return () => cancelAnimationFrame(animId);
+  }, [minimal]);
   const uid = React.useId();
   const { width, height } = sizeMap[size];
   const CX = 150; // center X of viewBox
@@ -75,11 +92,18 @@ export default function CardBack({ className = '', size = 'md', animated = true,
 
   // P1-8: Parallax tilt on mouse
   const handleMouseMove = React.useCallback((e: React.MouseEvent) => {
-    if (!parallax || !wrapRef.current) return;
+    if (!wrapRef.current) return;
     const rect = wrapRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    wrapRef.current.style.transform = `perspective(800px) rotateY(${x * 15}deg) rotateX(${-y * 10}deg)`;
+    if (parallax) {
+      wrapRef.current.style.transform = `perspective(800px) rotateY(${x * 15}deg) rotateX(${-y * 10}deg)`;
+    }
+    // Holographic refraction follows mouse X position
+    if (holoRef.current && !minimal) {
+      const mouseAngle = (x + 0.5) * 360; // 0-360 based on mouse X
+      holoRef.current.style.setProperty('--holo-angle', `${mouseAngle}deg`);
+    }
   }, [parallax]);
 
   const handleMouseLeave = React.useCallback(() => {
@@ -358,6 +382,31 @@ export default function CardBack({ className = '', size = 'md', animated = true,
             strokeWidth={1}
           />
         </svg>
+
+        {/* Holographic refraction overlay — conic-gradient that rotates */}
+        {!minimal && (
+          <div
+            ref={holoRef}
+            className="absolute inset-0 pointer-events-none rounded-xl"
+            style={{
+              '--holo-angle': '0deg',
+              background: `conic-gradient(
+                from var(--holo-angle, 0deg),
+                transparent 0%,
+                rgba(155,140,255,0.07) 12%,
+                transparent 20%,
+                rgba(212,175,55,0.05) 35%,
+                transparent 45%,
+                rgba(255,100,200,0.04) 60%,
+                transparent 70%,
+                rgba(100,200,255,0.05) 85%,
+                transparent 100%
+              )`,
+              mixBlendMode: 'screen',
+              opacity: 0.8,
+            } as React.CSSProperties}
+          />
+        )}
       </div>
     </>
   );

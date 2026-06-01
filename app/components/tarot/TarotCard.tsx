@@ -3,10 +3,13 @@
 import { useRef, useCallback } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import Image from 'next/image';
 import CardBack from './CardBack';
 import { TarotCard as TarotCardType } from '@/src/data/tarot-cards';
 import { playFlip, playReveal } from '@/src/lib/sounds';
+
+gsap.registerPlugin(ScrambleTextPlugin);
 
 interface TarotCardProps {
   card: TarotCardType;
@@ -35,6 +38,9 @@ export default function TarotCard({
   const containerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+  const raysRef = useRef<HTMLDivElement>(null);
+  const borderRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLParagraphElement>(null);
   const prevRevealed = useRef(isRevealed);
   const tiltXTo = useRef<gsap.QuickToFunc | null>(null);
   const tiltYTo = useRef<gsap.QuickToFunc | null>(null);
@@ -59,6 +65,33 @@ export default function TarotCard({
       if (glowRef.current) {
         tl.fromTo(glowRef.current, { scale: 0.2, autoAlpha: 1 },
           { scale: 2.8, autoAlpha: 0, duration: 0.7, ease: 'power2.out', onStart: () => playReveal() }, '-=0.3');
+      }
+      // Light rays — 4 lines radiate outward from center
+      if (raysRef.current) {
+        const rays = raysRef.current.querySelectorAll('.glow-ray');
+        tl.fromTo(rays,
+          { scaleX: 0, autoAlpha: 0.9 },
+          { scaleX: 1, autoAlpha: 0, duration: 0.6, stagger: 0.04, ease: 'power2.out' },
+          '-=0.55');
+      }
+      // Border glow — gold outline fades in then out
+      if (borderRef.current) {
+        tl.fromTo(borderRef.current, { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.3, ease: 'power2.out' }, '-=0.4');
+        tl.to(borderRef.current, { autoAlpha: 0, duration: 0.5, ease: 'power2.in' }, '-=0.1');
+      }
+      // ScrambleText — card name decode effect
+      if (nameRef.current) {
+        tl.add(() => {
+          gsap.to(nameRef.current!, {
+            duration: 0.8,
+            scrambleText: {
+              text: card.nameZh,
+              chars: '塔罗命运星辰月光∞✦✧',
+              revealDelay: 0.2,
+            },
+          });
+        }, '-=0.3');
       }
       tl.to(containerRef.current, { scale: 1, y: 0, duration: 0.4, ease: 'elastic.out(1, 0.6)' }, '-=0.25');
     } else {
@@ -101,6 +134,34 @@ export default function TarotCard({
           borderRadius: '0.5rem', opacity: 0,
         }}
       />
+      {/* Light rays — 4 gradient lines radiating from center */}
+      <div ref={raysRef} className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+        {[0, 45, 90, 135].map(angle => (
+          <div
+            key={angle}
+            className="glow-ray absolute"
+            style={{
+              left: '50%', top: '50%',
+              width: '250%', height: '2px',
+              transform: `translate(-50%, -50%) rotate(${angle}deg) scaleX(0)`,
+              transformOrigin: 'center',
+              background: isReversed
+                ? 'linear-gradient(90deg, transparent 0%, rgba(180,80,255,0.5) 25%, rgba(255,255,255,0.7) 50%, rgba(180,80,255,0.5) 75%, transparent 100%)'
+                : 'linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 25%, rgba(255,255,255,0.7) 50%, rgba(212,175,55,0.5) 75%, transparent 100%)',
+            }}
+          />
+        ))}
+      </div>
+      {/* Border glow — gold outline on reveal */}
+      <div
+        ref={borderRef}
+        className="absolute inset-0 pointer-events-none z-20 rounded-lg"
+        style={{
+          border: '2px solid rgba(212,175,55,0.5)',
+          boxShadow: '0 0 16px rgba(212,175,55,0.3), inset 0 0 16px rgba(212,175,55,0.1)',
+          opacity: 0,
+        }}
+      />
       <div ref={innerRef} className="w-full h-full relative" style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}>
         <div className="absolute inset-0 w-full h-full" style={{ backfaceVisibility: 'hidden' }}>
           <CardBack size={size} />
@@ -117,7 +178,7 @@ export default function TarotCard({
               <div className="absolute top-2 right-2 bg-red-600/90 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded font-bold shadow-md">REVERSED</div>
             )}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2">
-              <p className="text-white text-center font-semibold truncate" style={{ fontSize: size === 'sm' ? '10px' : size === 'md' ? '12px' : '14px' }}>
+              <p ref={nameRef} className="text-white text-center font-semibold truncate" style={{ fontSize: size === 'sm' ? '10px' : size === 'md' ? '12px' : '14px' }}>
                 {card.nameZh}
               </p>
             </div>
