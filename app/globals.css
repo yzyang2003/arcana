@@ -384,10 +384,12 @@ body {
   }
 }
 
-/* Gold metallic shimmer sweep */
+/* Gold metallic shimmer — color-cycle animation (SplitText compatible) */
 @keyframes gold-shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0%, 100% { color: #d4af37; }
+  25% { color: #f5e6a3; }
+  50% { color: #d4af37; }
+  75% { color: #b8962e; }
 }
 
 /* Typewriter line reveal — blur + fade for streaming text */
@@ -436,18 +438,7 @@ body {
    ============================================================ */
 
 .gold-shimmer {
-  background: linear-gradient(
-    90deg,
-    #d4af37 0%,
-    #f5e6a3 25%,
-    #d4af37 50%,
-    #b8962e 75%,
-    #d4af37 100%
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #d4af37;
   animation: gold-shimmer 4s ease-in-out infinite;
 }
 
