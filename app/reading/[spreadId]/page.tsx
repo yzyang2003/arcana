@@ -235,7 +235,7 @@ export default function SpreadReadingPage() {
   const revealedCount = drawnCards.filter((c) => c.revealed).length;
 
   return (
-    <div className="relative min-h-screen px-4 py-24">
+    <div className="relative h-[100dvh] overflow-hidden px-4 pt-24">
       {/* IDLE — position preview */}
       {status === 'idle' && (
         <div ref={containerRef} className="mx-auto max-w-3xl text-center">
@@ -254,15 +254,17 @@ export default function SpreadReadingPage() {
 
       {/* SHUFFLING */}
       {status === 'shuffling' && (
-        <div ref={containerRef} className="flex min-h-[60vh] flex-col items-center justify-center">
+        <div ref={containerRef} className="flex h-[60vh] flex-col items-center justify-center">
           <p className="mb-6 text-sm text-muted animate-pulse">洗牌中...</p>
-          <ShuffleDeck cardCount={deck.length} onComplete={() => useReadingStore.setState({ status: 'selecting' })} />
+          <div className="w-full flex justify-center">
+            <ShuffleDeck cardCount={deck.length} onComplete={() => useReadingStore.setState({ status: 'selecting' })} />
+          </div>
         </div>
       )}
 
       {/* SELECTING */}
       {status === 'selecting' && (
-        <div ref={containerRef} className="mx-auto max-w-5xl">
+        <div ref={containerRef} className="mx-auto max-w-5xl flex flex-col justify-center pt-[72px]" style={{ height: 'calc(100dvh - 96px)' }}>
           <CardFanSelection totalCards={initialDeckLen.current} onSelect={selectCard} />
           <p className="mt-6 text-center text-sm text-muted">
             选择 {spread.cardCount} 张牌 — 已选 {drawnCards.length}/{spread.cardCount}

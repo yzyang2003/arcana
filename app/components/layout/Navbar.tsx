@@ -49,7 +49,7 @@ export function Navbar() {
   }, [mobileOpen]);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
+    <nav className="fixed top-0 left-0 z-50 px-4 pt-4" style={{ width: '100vw' }}>
       <div className="mx-auto max-w-2xl">
         <div className="glass-panel rounded-full px-5 py-2.5 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
@@ -64,7 +64,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3 py-1.5 rounded-full text-xs tracking-wider transition-all ${
+                className={`px-3 py-1.5 rounded-full text-xs tracking-wider transition-colors duration-200 ${
                   pathname === link.href
                     ? 'bg-accent/15 text-accent'
                     : 'text-muted hover:text-frost hover:bg-white/5'

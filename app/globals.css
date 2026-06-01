@@ -115,7 +115,6 @@
    ============================================================ */
 
 html {
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -560,9 +559,7 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
-main {
-  animation: page-enter 0.4s ease-out both;
-}
+/* page transition handled by GSAP per-component */
 
 /* ============================================================
    P1-11: Skeleton Loading

@@ -11,9 +11,9 @@ interface CardBackProps {
 }
 
 const sizeMap = {
-  sm: { width: 150, height: 220 },
-  md: { width: 240, height: 352 },
-  lg: { width: 320, height: 469 },
+  sm: { width: 120, height: 180 },
+  md: { width: 180, height: 270 },
+  lg: { width: 240, height: 360 },
 };
 
 // Helper to generate dots on a circle

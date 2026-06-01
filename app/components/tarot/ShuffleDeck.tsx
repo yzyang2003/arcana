@@ -100,7 +100,7 @@ export default function ShuffleDeck({ duration = 2500, onComplete, cardCount = 7
       />
 
       {/* Card stack */}
-      <div ref={containerRef} className="relative" style={{ perspective: 800 }}>
+      <div ref={containerRef} className="relative" style={{ perspective: 800, width: 150, height: 220 }}>
         {cardPositions.map((_, i) => (
           <div
             key={i}

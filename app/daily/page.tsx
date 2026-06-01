@@ -37,8 +37,8 @@ export default function DailyPage() {
 
     // Card — scale up from small
     tl.fromTo(containerRef.current.querySelector('.daily-card'),
-      { autoAlpha: 0, scale: 0.85, rotateY: -10 },
-      { autoAlpha: 1, scale: 1, rotateY: 0, duration: 0.8, ease: 'back.out(1.5)' }, 0.3);
+      { autoAlpha: 0, scale: 0.85 },
+      { autoAlpha: 1, scale: 1, duration: 0.8, ease: 'back.out(1.5)' }, 0.3);
 
     // Hint text
     if (!revealed) {
@@ -69,11 +69,7 @@ export default function DailyPage() {
         <p className="mt-1 text-sm text-muted">今天宇宙想对你说的话</p>
       </div>
 
-      <div
-        className="daily-card mt-10 cursor-pointer"
-        style={{ opacity: 0, willChange: 'transform', perspective: '1000px' }}
-        onClick={() => !revealed && handleReveal()}
-      >
+      <div className="daily-card cursor-pointer mt-10" style={{ opacity: 0, willChange: 'transform', perspective: '1000px' }} onClick={() => !revealed && handleReveal()}>
         <TarotCard card={card} isRevealed={revealed} isReversed={reversed} size="lg" />
       </div>
 
