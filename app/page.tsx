@@ -47,6 +47,18 @@ export default function Home() {
         stagger: 0.025, duration: 0.5, ease: 'power3.out',
       }, 0.9 + i * 0.15);
     });
+    // Gold shimmer — GSAP color cycle on the accent line (after entrance)
+    const goldLine = containerRef.current.querySelector('.gold-shimmer');
+    if (goldLine) {
+      tl.to(goldLine, {
+        color: '#f5e6a3',
+        duration: 1.5,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+      }, '+=0.3');
+    }
+
 
     // Subtitle — word-by-word
     const subtitleEl = containerRef.current.querySelector('.subtitle');
