@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useReadingStore } from '@/src/store/reading-store';
@@ -108,7 +108,7 @@ export default function HistoryPage() {
                       const card = getCardById(dc.id);
                       return (
                         <div key={j} className="h-8 w-5 overflow-hidden rounded-sm bg-surface">
-                          {card && <img src={card.image} alt={card.nameZh} className="h-full w-full object-cover" />}
+                          {card && <img src={card.image} alt={card.nameZh} loading="lazy" decoding="async" className="h-full w-full object-cover" />}
                         </div>
                       );
                     })}
@@ -130,7 +130,7 @@ export default function HistoryPage() {
                         return (
                           <div key={j} className="flex-shrink-0 text-center">
                             <div className="h-16 w-11 overflow-hidden rounded">
-                              <img src={card.image} alt={card.nameZh} className={`h-full w-full object-cover ${dc.reversed ? 'rotate-180' : ''}`} />
+                              <img src={card.image} alt={card.nameZh} loading="lazy" decoding="async" className={`h-full w-full object-cover ${dc.reversed ? 'rotate-180' : ''}`} />
                             </div>
                             <p className="mt-1 text-[9px] text-muted">{card.nameZh}{dc.reversed ? '逆' : ''}</p>
                           </div>
@@ -158,6 +158,12 @@ export default function HistoryPage() {
 function ConfirmDialog({ onClose, onConfirm }: { onClose: () => void; onConfirm: () => void }) {
   const backdropRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    panelRef.current?.querySelector<HTMLElement>('button')?.focus();
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
 
   useGSAP(() => {
     if (!backdropRef.current || !panelRef.current) return;
@@ -168,7 +174,7 @@ function ConfirmDialog({ onClose, onConfirm }: { onClose: () => void; onConfirm:
   return (
     <div
       ref={backdropRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60"
       style={{ opacity: 0 }}
       onClick={onClose}
     >

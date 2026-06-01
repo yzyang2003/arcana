@@ -133,8 +133,10 @@ export default function ReadingPage() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="输入你的问题..."
+            maxLength={200}
             className="input-field w-full"
           />
+          <p className="mt-1 text-right text-[10px] text-muted/50">{question.length}/200</p>
           <button
             onClick={handleStart}
             disabled={!selectedId || !question.trim()}

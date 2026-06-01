@@ -470,39 +470,7 @@ body {
 }
 
 /* ============================================================
-   18. Navigation Styles
-   ============================================================ */
-
-.nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 100;
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  background: rgba(5, 5, 5, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.nav-link {
-  color: var(--muted);
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: 0.025em;
-  transition: color 200ms var(--ease-mystical);
-  padding: 0.5rem 0.75rem;
-}
-
-.nav-link:hover {
-  color: var(--frost);
-}
-
-.nav-link.active {
-  color: var(--accent);
-}
-
-/* ============================================================
-   19. Card Container & Flip Styles
+   18. Card Container & Flip Styles
    ============================================================ */
 
 .card-container {
@@ -628,4 +596,14 @@ main {
 
 .card-hover-glow {
   filter: drop-shadow(0 0 16px rgba(155,140,255,0.7)) brightness(1.05) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  body::before { animation: none !important; }
+  main { animation: none !important; }
 }

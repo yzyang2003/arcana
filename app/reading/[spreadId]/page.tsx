@@ -82,7 +82,7 @@ export default function SpreadReadingPage() {
   const spreadId = params.spreadId as string;
   const spread = spreads.find((s) => s.id === spreadId);
 
-  const { status, deck, drawnCards, aiResult, selectCard, revealCard, setAIResult, saveToHistory, reset } =
+  const { status, deck, drawnCards, aiResult, error, selectCard, revealCard, setAIResult, setError, saveToHistory, reset } =
     useReadingStore();
 
   const initialDeckLen = useRef(0);
@@ -161,22 +161,29 @@ export default function SpreadReadingPage() {
     });
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
       const res = await fetch('/api/reading', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ spreadType: spread.id, cards, question: useReadingStore.getState().question }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       if (!res.ok) throw new Error('API error');
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
       let fullText = '';
+      let sseBuffer = '';
       if (reader) {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          for (const line of chunk.split('\n')) {
+          const chunk = sseBuffer + decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n');
+          sseBuffer = lines.pop() || '';
+          for (const line of lines) {
             if (line.startsWith('data: ')) {
               const data = line.slice(6);
               if (data === '[DONE]') continue;
@@ -184,15 +191,23 @@ export default function SpreadReadingPage() {
                 const parsed = JSON.parse(data);
                 const delta = parsed.choices?.[0]?.delta?.content;
                 if (delta) { fullText += delta; setStreamText(fullText); }
-              } catch { /* skip */ }
+              } catch { /* skip malformed */ }
             }
           }
+        }
+        if (sseBuffer.startsWith('data: ') && sseBuffer.slice(6) !== '[DONE]') {
+          try {
+            const parsed = JSON.parse(sseBuffer.slice(6));
+            const delta = parsed.choices?.[0]?.delta?.content;
+            if (delta) { fullText += delta; setStreamText(fullText); }
+          } catch { /* skip */ }
         }
       }
       setAIResult(fullText || '解读生成完成。');
       saveToHistory();
     } catch {
-      setAIResult('AI解读暂时不可用，请稍后重试。');
+      setError('AI解读暂时不可用，请稍后重试。');
+      useReadingStore.setState({ aiResult: 'AI解读暂时不可用，请稍后重试。' });
       saveToHistory();
     } finally {
       setIsStreaming(false);
@@ -259,7 +274,7 @@ export default function SpreadReadingPage() {
       )}
 
       {/* REVEALING / INTERPRETING / COMPLETE */}
-      {(status === 'revealing' || status === 'interpreting' || status === 'complete') && (
+      {(status === 'revealing' || status === 'interpreting' || status === 'complete' || status === 'error') && (
         <div ref={containerRef} className="mx-auto max-w-6xl px-4">
           <p className="mb-4 text-center text-sm text-muted">
             {status === 'revealing' && `点击牌面揭示 (${revealedCount}/${spread.cardCount})`}
@@ -305,32 +320,46 @@ export default function SpreadReadingPage() {
           </div>
 
           {/* AI reading — with SplitText heading animation */}
-          {(status === 'interpreting' || status === 'complete') && (
+          {(status === 'interpreting' || status === 'complete' || status === 'error') && (
             <div ref={panelRef} className="glass-panel mx-auto mt-6 max-w-3xl p-5">
               <p className="reading-heading mb-3 font-display-alt text-sm tracking-wider text-accent-soft/80">
                 ✦ AI 解读
               </p>
-              <div
-                ref={textRef}
-                className="max-w-none text-sm leading-relaxed text-frost/90 whitespace-pre-wrap"
-                style={{ maxHeight: '35vh', overflowY: 'auto' }}
-              >
-                {streamText || (status === 'interpreting' && (
-                  <span className="inline-flex items-center gap-2 text-muted">
-                    <span className="animate-pulse">正在解读中</span>
-                    <span className="flex gap-1">
-                      <span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span>
-                      <span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span>
-                      <span className="animate-bounce" style={{ animationDelay: '300ms' }}>.</span>
-                    </span>
-                  </span>
-                ))}
-              </div>
-              {status === 'complete' && (
-                <div className="mt-4 flex gap-3">
-                  <button onClick={() => { reset(); router.push('/reading'); }} className="glass-button flex-1 py-2 text-sm">重新占卜</button>
-                  <button onClick={() => router.push('/history')} className="accent-button flex-1 py-2 text-sm">查看记录</button>
+              {status === 'error' ? (
+                <div className="text-center py-4">
+                  <p className="text-sm text-red-400 mb-3">{error || 'AI解读暂时不可用'}</p>
+                  <button
+                    onClick={() => { setError(''); useReadingStore.setState({ status: 'interpreting' as const }); }}
+                    className="glass-button px-4 py-2 text-sm"
+                  >
+                    重试
+                  </button>
                 </div>
+              ) : (
+                <>
+                  <div
+                    ref={textRef}
+                    className="max-w-none text-sm leading-relaxed text-frost/90 whitespace-pre-wrap"
+                    style={{ maxHeight: '35vh', overflowY: 'auto' }}
+                  >
+                    {streamText || (status === 'interpreting' && (
+                      <span className="inline-flex items-center gap-2 text-muted">
+                        <span className="animate-pulse">正在解读中</span>
+                        <span className="flex gap-1">
+                          <span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span>
+                          <span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span>
+                          <span className="animate-bounce" style={{ animationDelay: '300ms' }}>.</span>
+                        </span>
+                      </span>
+                    ))}
+                  </div>
+                  {status === 'complete' && (
+                    <div className="mt-4 flex gap-3">
+                      <button onClick={() => { reset(); router.push('/reading'); }} className="glass-button flex-1 py-2 text-sm">重新占卜</button>
+                      <button onClick={() => router.push('/history')} className="accent-button flex-1 py-2 text-sm">查看记录</button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}

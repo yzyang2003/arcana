@@ -59,11 +59,13 @@ export default function CardFanSelection({ totalCards, onSelect }: CardFanSelect
     playWhoosh({ duration: 0.6, pitch: 600 });
 
     const tl = gsap.timeline();
-    tl.set(cards, {
-      xPercent: -50, yPercent: -50,
-      x: 0, y: 0,
-      rotation: () => gsap.utils.random(-25, 25),
-      scale: 0.5, autoAlpha: 0, rotateX: -30,
+    cards.forEach((card) => {
+      gsap.set(card, {
+        xPercent: -50, yPercent: -50,
+        x: 0, y: 0,
+        rotation: gsap.utils.random(-25, 25),
+        scale: 0.5, autoAlpha: 0, rotateX: -30,
+      });
     });
     cards.forEach((card, i) => {
       const pos = allPositions[i];

@@ -1,10 +1,11 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { TAROT_CARDS } from '@/src/data/tarot-cards';
-import TarotCard from '@/app/components/tarot/TarotCard';
+import type { TarotCard } from '@/src/data/tarot-cards';
+import TarotCardComponent from '@/app/components/tarot/TarotCard';
 
 const categories = [
   { id: 'all', label: '全部' },
@@ -78,7 +79,7 @@ export default function LibraryPage() {
               className="grid-card group transition-transform duration-200 hover:scale-105 hover:drop-shadow-[0_0_12px_rgba(155,140,255,0.4)]"
               style={{ opacity: 0 }}
             >
-              <TarotCard card={card} isRevealed={true} size="sm" />
+              <TarotCardComponent card={card} isRevealed={true} size="sm" />
               <p className="mt-1 text-center text-[11px] text-muted group-hover:text-frost">{card.nameZh}</p>
             </button>
           ))}
@@ -92,9 +93,15 @@ export default function LibraryPage() {
   );
 }
 
-function DetailModal({ detail, onClose }: { detail: any; onClose: () => void }) {
+function DetailModal({ detail, onClose }: { detail: TarotCard; onClose: () => void }) {
   const backdropRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    panelRef.current?.querySelector<HTMLElement>('button')?.focus();
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
 
   useGSAP(() => {
     if (!backdropRef.current || !panelRef.current) return;
@@ -105,7 +112,7 @@ function DetailModal({ detail, onClose }: { detail: any; onClose: () => void }) 
   return (
     <div
       ref={backdropRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-4"
       style={{ opacity: 0 }}
       onClick={onClose}
     >
@@ -117,7 +124,7 @@ function DetailModal({ detail, onClose }: { detail: any; onClose: () => void }) 
       >
         <div className="flex gap-4">
           <div className="w-32 flex-shrink-0">
-            <TarotCard card={detail} isRevealed={true} size="sm" />
+            <TarotCardComponent card={detail} isRevealed={true} size="sm" />
           </div>
           <div className="flex-1">
             <h3 className="font-display-alt text-lg tracking-wider text-frost">{detail.nameZh}</h3>

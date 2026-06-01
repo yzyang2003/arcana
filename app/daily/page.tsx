@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { SplitText } from 'gsap/SplitText';
@@ -47,10 +47,16 @@ export default function DailyPage() {
     }
   }, { scope: containerRef });
 
+  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleReveal = () => {
     setRevealed(true);
-    setTimeout(() => setRevealDetails(true), 300);
+    revealTimerRef.current = setTimeout(() => setRevealDetails(true), 300);
   };
+
+  useEffect(() => {
+    return () => { if (revealTimerRef.current) clearTimeout(revealTimerRef.current); };
+  }, []);
 
   return (
     <div ref={containerRef} className="relative flex min-h-screen flex-col items-center justify-center px-4 py-24">
@@ -87,7 +93,7 @@ export default function DailyPage() {
   );
 }
 
-function RevealDetails({ card, reversed }: { card: any; reversed: boolean }) {
+function RevealDetails({ card, reversed }: { card: (typeof TAROT_CARDS)[number]; reversed: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {

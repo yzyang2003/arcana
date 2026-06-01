@@ -22,7 +22,8 @@ export interface Reading {
 export type ReadingStatus =
   | 'idle'
   | 'shuffling'
-  | 'selecting'    // 扇形选牌阶段
-  | 'revealing'    // 翻牌阶段
+  | 'selecting'
+  | 'revealing'
   | 'interpreting'
-  | 'complete';
+  | 'complete'
+  | 'error';

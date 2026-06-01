@@ -58,6 +58,7 @@ function CornerFlourish({
 
 export default function CardBack({ className = '', size = 'md', animated = true, minimal = false, parallax = false }: CardBackProps) {
   const wrapRef = React.useRef<HTMLDivElement>(null);
+  const uid = React.useId();
   const { width, height } = sizeMap[size];
   const CX = 150; // center X of viewBox
   const CY = 220; // center Y of viewBox
@@ -121,21 +122,21 @@ export default function CardBack({ className = '', size = 'md', animated = true,
         >
           <defs>
             {/* Background gradient: mystic purple → void black */}
-            <linearGradient id="bg-grad" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={`${uid}-bg-grad`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#1a1035" />
               <stop offset="50%" stopColor="#0d0a1a" />
               <stop offset="100%" stopColor="#050308" />
             </linearGradient>
 
             {/* Radial vignette */}
-            <radialGradient id="vignette" cx="50%" cy="50%" r="60%">
+            <radialGradient id={`${uid}-vignette`} cx="50%" cy="50%" r="60%">
               <stop offset="0%" stopColor="transparent" />
               <stop offset="70%" stopColor="rgba(0,0,0,0.15)" />
               <stop offset="100%" stopColor="rgba(0,0,0,0.7)" />
             </radialGradient>
 
             {/* Holographic shimmer gradient */}
-            <linearGradient id="holo-shimmer" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id={`${uid}-holo-shimmer`} x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="rgba(155,140,255,0)" />
               <stop offset="30%" stopColor="rgba(212,175,55,0.08)" />
               <stop offset="50%" stopColor="rgba(155,140,255,0.12)" />
@@ -144,28 +145,28 @@ export default function CardBack({ className = '', size = 'md', animated = true,
             </linearGradient>
 
             {/* Moon glow radial */}
-            <radialGradient id="moon-glow" cx="50%" cy="50%" r="50%">
+            <radialGradient id={`${uid}-moon-glow`} cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.35} />
               <stop offset="40%" stopColor="#9B8CFF" stopOpacity={0.15} />
               <stop offset="100%" stopColor="#9B8CFF" stopOpacity={0} />
             </radialGradient>
 
             {/* Mask for crescent moon */}
-            <mask id="crescent-mask">
+            <mask id={`${uid}-crescent-mask`}>
               <rect width="300" height="440" fill="black" />
               <circle cx="150" cy="180" r="30" fill="white" />
               <circle cx="162" cy="173" r="26" fill="black" />
             </mask>
 
             {/* Subtle inner glow for concentric rings */}
-            <radialGradient id="ring-glow" cx="50%" cy="50%" r="50%">
+            <radialGradient id={`${uid}-ring-glow`} cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#9B8CFF" stopOpacity={0.15} />
               <stop offset="100%" stopColor="#9B8CFF" stopOpacity={0} />
             </radialGradient>
           </defs>
 
           {/* === LAYER 1: Background === */}
-          <rect width="300" height="440" fill="url(#bg-grad)" />
+          <rect width="300" height="440" fill={`url(#${uid}-bg-grad)`} />
 
           {/* Subtle noise texture via tiny pattern */}
           <rect width="300" height="440" opacity={0.03}>
@@ -173,7 +174,7 @@ export default function CardBack({ className = '', size = 'md', animated = true,
           </rect>
 
           {/* === LAYER 2: Concentric circles === */}
-          {!minimal && <circle cx={CX} cy={CY} r="120" fill="url(#ring-glow)" />}
+          {!minimal && <circle cx={CX} cy={CY} r="120" fill={`url(#${uid}-ring-glow)`} />}
           {concentrics.map((c, i) => (
             <circle
               key={`concentric-${i}`}
@@ -204,7 +205,7 @@ export default function CardBack({ className = '', size = 'md', animated = true,
           {/* === LAYER 4: Crescent moon with glow === */}
           {/* Glow behind */}
           {!minimal && (
-            <circle cx="150" cy="180" r="50" fill="url(#moon-glow)" opacity={0.6}>
+            <circle cx="150" cy="180" r="50" fill={`url(#${uid}-moon-glow)`} opacity={0.6}>
               {animated && (
                 <animate attributeName="opacity" values="0.4;0.7;0.4" dur="6s" repeatCount="indefinite" />
               )}
@@ -212,8 +213,8 @@ export default function CardBack({ className = '', size = 'md', animated = true,
           )}
 
           {/* Crescent shape */}
-          <circle cx="150" cy="180" r="30" fill="none" stroke="#D4AF37" strokeWidth={1.2} opacity={0.5} mask="url(#crescent-mask)" />
-          <circle cx="150" cy="180" r="30" fill="#D4AF37" opacity={0.12} mask="url(#crescent-mask)" />
+          <circle cx="150" cy="180" r="30" fill="none" stroke="#D4AF37" strokeWidth={1.2} opacity={0.5} mask={`url(#${uid}-crescent-mask)`} />
+          <circle cx="150" cy="180" r="30" fill="#D4AF37" opacity={0.12} mask={`url(#${uid}-crescent-mask)`} />
 
           {/* Small stars around moon */}
           {[
@@ -315,7 +316,7 @@ export default function CardBack({ className = '', size = 'md', animated = true,
               <rect
                 width="300"
                 height="440"
-                fill="url(#holo-shimmer)"
+                fill={`url(#${uid}-holo-shimmer)`}
                 opacity={0.5}
                 style={
                   animated
@@ -329,7 +330,7 @@ export default function CardBack({ className = '', size = 'md', animated = true,
 
               {/* Animated shimmer sweep */}
               {animated && (
-                <rect width="300" height="440" fill="url(#holo-shimmer)" opacity={0.3}>
+                <rect width="300" height="440" fill={`url(#${uid}-holo-shimmer)`} opacity={0.3}>
                   <animateTransform
                     attributeName="transform"
                     type="translate"
@@ -343,7 +344,7 @@ export default function CardBack({ className = '', size = 'md', animated = true,
           )}
 
           {/* === LAYER 8: Vignette === */}
-          <rect width="300" height="440" fill="url(#vignette)" />
+          <rect width="300" height="440" fill={`url(#${uid}-vignette)`} />
 
           {/* Outer glow / border highlight */}
           <rect

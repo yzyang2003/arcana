@@ -20,16 +20,18 @@ function fisherYatesShuffle<T>(arr: T[]): T[] {
 export interface ReadingStore {
   status: ReadingStatus;
   spread: Spread | null;
-  deck: string[];           // 洗好的牌ID数组
-  drawnCards: ReadingCard[]; // 已选中的牌（按牌阵顺序）
+  deck: string[];
+  drawnCards: ReadingCard[];
   question: string;
   aiResult: string;
+  error: string;
   history: Reading[];
 
   startReading: (spread: Spread, question: string) => void;
-  selectCard: (deckIndex: number) => void;  // 从扇形选牌
+  selectCard: (deckIndex: number) => void;
   revealCard: (positionIndex: number) => void;
   setAIResult: (result: string) => void;
+  setError: (error: string) => void;
   saveToHistory: () => void;
   clearHistory: () => void;
   reset: () => void;
@@ -42,6 +44,7 @@ const initialState = {
   drawnCards: [] as ReadingCard[],
   question: '',
   aiResult: '',
+  error: '',
 };
 
 export const useReadingStore = create<ReadingStore>()(
@@ -68,6 +71,7 @@ export const useReadingStore = create<ReadingStore>()(
         const { deck, drawnCards, spread } = get();
         if (!spread) return;
         if (drawnCards.length >= spread.cardCount) return;
+        if (deckIndex < 0 || deckIndex >= deck.length) return;
 
         const cardId = deck[deckIndex];
         // 从deck中移除这张牌
@@ -107,7 +111,9 @@ export const useReadingStore = create<ReadingStore>()(
         });
       },
 
-      setAIResult: (result) => set({ aiResult: result, status: 'complete' }),
+      setAIResult: (result) => set({ aiResult: result, error: '', status: 'complete' }),
+
+      setError: (error) => set({ error, status: 'error' }),
 
       saveToHistory: () => {
         const { spread, question, drawnCards, aiResult, history } = get();
@@ -120,7 +126,7 @@ export const useReadingStore = create<ReadingStore>()(
           result: aiResult,
           date: new Date().toISOString(),
         };
-        set({ history: [reading, ...history] });
+        set({ history: [reading, ...history].slice(0, 50) });
       },
 
       clearHistory: () => set({ history: [] }),

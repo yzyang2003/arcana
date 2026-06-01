@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const baseUrl = process.env.AI_BASE_URL || 'https://api.openai.com/v1';
     const model = process.env.AI_MODEL || 'gpt-4o-mini';
-    console.log('AI Config:', { baseUrl, model, keyPrefix: apiKey.substring(0, 8) });
+
 
     const messages = buildPrompt(cards, question);
 
@@ -52,10 +52,9 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI API error:', response.status, errorText);
+      console.error('AI API error:', response.status);
       return NextResponse.json(
-        { error: `AI 解读服务暂时不可用 (${response.status}): ${errorText.substring(0, 200)}` },
+        { error: 'AI 解读服务暂时不可用，请稍后重试' },
         { status: 502 }
       );
     }

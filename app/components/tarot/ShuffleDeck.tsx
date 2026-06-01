@@ -108,7 +108,7 @@ export default function ShuffleDeck({ duration = 2500, onComplete, cardCount = 7
             style={{
               zIndex: i,
               transformOrigin: 'center center',
-              willChange: 'transform',
+
             }}
           >
             <CardBack size="sm" animated={false} minimal />
