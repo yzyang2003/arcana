@@ -18,6 +18,7 @@ interface TarotCardProps {
   onClick?: () => void;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  animated?: boolean;
 }
 
 const sizeConfig = {
@@ -33,6 +34,7 @@ export default function TarotCard({
   onClick,
   size = 'md',
   className = '',
+  animated = false,
 }: TarotCardProps) {
   const { width, height } = sizeConfig[size];
   const containerRef = useRef<HTMLDivElement>(null);
@@ -177,7 +179,7 @@ export default function TarotCard({
       />
       <div ref={innerRef} className="w-full h-full relative" style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}>
         <div className="absolute inset-0 w-full h-full" style={{ backfaceVisibility: 'hidden' }}>
-          <CardBack width={width} height={height} />
+          <CardBack width={width} height={height} animated={animated} />
         </div>
         <div
           className={`absolute inset-0 w-full h-full rounded-lg overflow-hidden ${isRevealed ? 'shadow-[0_0_24px_rgba(212,175,55,0.5)]' : ''}`}

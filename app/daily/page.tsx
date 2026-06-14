@@ -119,7 +119,7 @@ export default function DailyPage() {
             />
           ))}
         </div>
-        <TarotCard card={card} isRevealed={revealed} isReversed={reversed} size="lg" />
+        <TarotCard card={card} isRevealed={revealed} isReversed={reversed} size="lg" animated />
       </div>
 
       {!revealed && (
