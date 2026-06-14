@@ -118,7 +118,7 @@ export default function ShuffleDeck({ duration = 2500, onComplete, cardCount = 7
 
             }}
           >
-            <CardBack size="sm" animated={false} minimal />
+            <CardBack width={120} height={180} animated={false} minimal />
           </div>
         ))}
       </div>

@@ -193,7 +193,7 @@ export default function CardFanSelection({ totalCards, onSelect }: CardFanSelect
             onTouchStart={() => handleTouchStart(card.index)}
             onTouchEnd={() => handleTouchEnd(card.index)}
           >
-            <CardBack size="sm" animated={false} minimal />
+            <CardBack width={120} height={180} animated={false} minimal />
           </div>
         );
       })}

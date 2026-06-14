@@ -1,11 +1,12 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useReadingStore } from '@/src/store/reading-store';
 import { getCardById } from '@/src/data/tarot-cards';
 import CardBack from '@/app/components/tarot/CardBack';
+import Modal from '@/app/components/ui/Modal';
 
 export default function HistoryPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -32,7 +33,6 @@ export default function HistoryPage() {
 
   const handleExpand = (id: string) => {
     if (expandedId === id) {
-      // Collapse
       const panel = panelRefs.current.get(id);
       if (panel) {
         gsap.to(panel, {
@@ -43,7 +43,6 @@ export default function HistoryPage() {
         setExpandedId(null);
       }
     } else {
-      // Collapse old if any
       if (expandedId) {
         const oldPanel = panelRefs.current.get(expandedId);
         if (oldPanel) {
@@ -51,7 +50,6 @@ export default function HistoryPage() {
         }
       }
       setExpandedId(id);
-      // Animate in after React renders
       requestAnimationFrame(() => {
         const panel = panelRefs.current.get(id);
         if (panel) {
@@ -82,7 +80,7 @@ export default function HistoryPage() {
 
         {history.length === 0 ? (
           <div className="flex flex-col items-center gap-4 py-20">
-            <CardBack size="sm" animated={false} />
+            <CardBack width={120} height={180} animated={false} />
             <p className="text-sm text-muted">还没有占卜记录</p>
           </div>
         ) : (
@@ -117,7 +115,6 @@ export default function HistoryPage() {
                   </div>
                 </button>
 
-                {/* Expandable panel — uses ref instead of getElementById */}
                 <div
                   ref={(el) => { if (el) panelRefs.current.set(reading.id, el); }}
                   className="overflow-hidden border-t border-white/5"
@@ -148,51 +145,18 @@ export default function HistoryPage() {
           </div>
         )}
 
-        {showConfirm && (
-          <ConfirmDialog onClose={() => setShowConfirm(false)} onConfirm={() => { clearHistory(); setShowConfirm(false); }} />
-        )}
-      </div>
-    </div>
-  );
-}
-
-function ConfirmDialog({ onClose, onConfirm }: { onClose: () => void; onConfirm: () => void }) {
-  const backdropRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    panelRef.current?.querySelector<HTMLElement>('button')?.focus();
-    return () => document.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
-  useGSAP(() => {
-    if (!backdropRef.current || !panelRef.current) return;
-    gsap.fromTo(backdropRef.current, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' });
-    gsap.fromTo(panelRef.current, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'power3.out' });
-  }, { scope: backdropRef });
-
-  return (
-    <div
-      ref={backdropRef}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60"
-      style={{ opacity: 0 }}
-      onClick={onClose}
-    >
-      <div
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label="确认清空历史记录"
-        className="glass-panel p-6 text-center"
-        style={{ opacity: 0, willChange: 'transform' }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <p className="text-sm text-frost">确定要清空所有记录吗？</p>
-        <div className="mt-4 flex gap-3">
-          <button onClick={onClose} className="glass-button flex-1">取消</button>
-          <button onClick={onConfirm} className="accent-button flex-1">清空</button>
-        </div>
+        <Modal
+          isOpen={showConfirm}
+          onClose={() => setShowConfirm(false)}
+          className="glass-panel p-6 text-center"
+          aria-label="确认清空历史记录"
+        >
+          <p className="text-sm text-frost">确定要清空所有记录吗？</p>
+          <div className="mt-4 flex gap-3">
+            <button onClick={() => setShowConfirm(false)} className="glass-button flex-1">取消</button>
+            <button onClick={() => { clearHistory(); setShowConfirm(false); }} className="accent-button flex-1">清空</button>
+          </div>
+        </Modal>
       </div>
     </div>
   );

@@ -178,10 +178,10 @@ export default function Home() {
           style={{ perspective: '1200px' }}
         >
           <div className="card-left card-tilt-target" style={{ transformStyle: 'preserve-3d' }}>
-            <GlowingEffect spread={250}><CardBack size="sm" animated /></GlowingEffect>
+            <GlowingEffect spread={250}><CardBack width={120} height={180} animated /></GlowingEffect>
           </div>
           <div className="card-right card-tilt-target" style={{ transformStyle: 'preserve-3d' }}>
-            <GlowingEffect spread={250}><CardBack size="sm" animated /></GlowingEffect>
+            <GlowingEffect spread={250}><CardBack width={120} height={180} animated /></GlowingEffect>
           </div>
         </div>
 

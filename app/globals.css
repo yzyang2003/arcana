@@ -121,7 +121,7 @@
 }
 
 /* ============================================================
-   4b. Font FOUT Protection — hide display fonts until loaded
+   5. Font FOUT Protection — hide display fonts until loaded
    ============================================================ */
 
 :not(.fonts-loaded) .font-display,
@@ -135,9 +135,8 @@
   opacity: 1;
 }
 
-
 /* ============================================================
-   5. Global Resets & Base Styles
+   6. Global Resets & Base Styles
    ============================================================ */
 
 html {
@@ -155,17 +154,13 @@ body {
 }
 
 /* ============================================================
-   6. Selection Colors
+   7. Selection & Focus
    ============================================================ */
 
 ::selection {
   background-color: rgba(155, 140, 255, 0.35);
   color: var(--frost);
 }
-
-/* ============================================================
-   7. Focus-Visible Outline
-   ============================================================ */
 
 *:focus-visible {
   outline: 2px solid var(--accent);
@@ -201,7 +196,7 @@ body {
 }
 
 /* ============================================================
-   9. Utility Classes — Glass Panels
+   9. Glass Panels
    ============================================================ */
 
 .glass-panel {
@@ -261,9 +256,8 @@ body {
   to { --border-angle: 360deg; }
 }
 
-
 /* ============================================================
-   10. Utility Classes — Noise Overlay
+   10. Noise Overlay
    ============================================================ */
 
 .noise-overlay {
@@ -283,24 +277,8 @@ body {
 }
 
 /* ============================================================
-   11. Animation Keyframes
+   11. Keyframes
    ============================================================ */
-
-/* Card holographic shimmer shift — 9s cycle */
-@keyframes card-back-holo-shift {
-  0% {
-    background-position: 0% 50%;
-    filter: hue-rotate(0deg);
-  }
-  50% {
-    background-position: 100% 50%;
-    filter: hue-rotate(30deg);
-  }
-  100% {
-    background-position: 0% 50%;
-    filter: hue-rotate(0deg);
-  }
-}
 
 /* Card shuffle animation */
 @keyframes shuffle-card {
@@ -404,14 +382,20 @@ body {
   50% { opacity: 0; }
 }
 
+/* Page enter transition */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes card-back-glow-pulse {
+  0%, 100% { filter: drop-shadow(0 4px 12px rgba(155, 140, 255, 0.2)); }
+  50% { filter: drop-shadow(0 4px 20px rgba(155, 140, 255, 0.4)); }
+}
+
 
 /* ============================================================
-   12. Animation Utility Classes
+   12. Animation Utilities
    ============================================================ */
-
-.animate-holo {
-  animation: card-back-holo-shift 9s ease-in-out infinite;
-}
 
 .animate-shuffle {
   animation: shuffle-card 0.6s ease-in-out;
@@ -433,17 +417,13 @@ body {
   animation: twinkle 8s ease-in-out infinite alternate;
 }
 
-/* ============================================================
-   12b. Gold Metallic Shimmer Text
-   ============================================================ */
+/* ── Gold Metallic Shimmer Text ── */
 
 .gold-shimmer {
   color: #d4af37;
 }
 
-/* ============================================================
-   12c. Streaming Typewriter Effects
-   ============================================================ */
+/* ── Streaming Typewriter Effects ── */
 
 .typewriter-line {
   animation: typewriter-reveal 0.35s ease-out both;
@@ -460,9 +440,7 @@ body {
   animation: cursor-blink 1s step-end infinite;
 }
 
-/* ============================================================
-   12d. Chromatic Dispersion Edge Effect
-   ============================================================ */
+/* ── Chromatic Dispersion Edge Effect ── */
 
 .glass-dispersion {
   box-shadow:
@@ -471,8 +449,6 @@ body {
     0 -1px 0 rgba(100, 255, 100, 0.03),
     0 1px 0 rgba(200, 150, 255, 0.03);
 }
-
-
 
 /* ============================================================
    13. Perspective & 3D Utilities
@@ -508,14 +484,13 @@ body {
     var(--accentDim) 100%
   );
   background-size: 300% 300%;
-  animation: card-back-holo-shift 9s ease-in-out infinite;
   opacity: 0.55;
   z-index: 2;
   pointer-events: none;
 }
 
 /* ============================================================
-   15. Glass Button Styles
+   15. Glass Button
    ============================================================ */
 
 .glass-button {
@@ -543,7 +518,7 @@ body {
 }
 
 /* ============================================================
-   16. Accent Button Styles
+   16. Accent Button
    ============================================================ */
 
 .accent-button {
@@ -569,7 +544,7 @@ body {
 }
 
 /* ============================================================
-   17. Input Field Styles
+   17. Input Field
    ============================================================ */
 
 .input-field {
@@ -600,7 +575,7 @@ body {
 }
 
 /* ============================================================
-   18. Card Container & Flip Styles
+   18. Card Container & Flip
    ============================================================ */
 
 .card-container {
@@ -638,7 +613,7 @@ body {
 }
 
 /* ============================================================
-   20. Reversed Card Badge
+   19. Reversed Card Badge
    ============================================================ */
 
 .reversed-badge {
@@ -656,44 +631,13 @@ body {
 }
 
 /* ============================================================
-   21. Star Field Background (CSS Only)
+   20. Page Transitions
    ============================================================ */
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.8) 50%, transparent 50%),
-    radial-gradient(1px 1px at 30% 65%, rgba(255, 255, 255, 0.6) 50%, transparent 50%),
-    radial-gradient(1.5px 1.5px at 55% 15%, rgba(212, 175, 55, 0.7) 50%, transparent 50%),
-    radial-gradient(1px 1px at 70% 40%, rgba(255, 255, 255, 0.5) 50%, transparent 50%),
-    radial-gradient(1.5px 1.5px at 85% 70%, rgba(138, 92, 255, 0.6) 50%, transparent 50%),
-    radial-gradient(1px 1px at 45% 85%, rgba(255, 255, 255, 0.7) 50%, transparent 50%),
-    radial-gradient(1px 1px at 20% 50%, rgba(255, 255, 255, 0.4) 50%, transparent 50%),
-    radial-gradient(1.2px 1.2px at 90% 10%, rgba(212, 175, 55, 0.5) 50%, transparent 50%),
-    radial-gradient(1px 1px at 60% 55%, rgba(255, 255, 255, 0.6) 50%, transparent 50%),
-    radial-gradient(1px 1px at 15% 90%, rgba(138, 92, 255, 0.4) 50%, transparent 50%),
-    radial-gradient(1.5px 1.5px at 40% 30%, rgba(255, 255, 255, 0.5) 50%, transparent 50%),
-    radial-gradient(1px 1px at 75% 80%, rgba(255, 255, 255, 0.7) 50%, transparent 50%);
-  animation: twinkle 8s ease-in-out infinite alternate;
-}
-
-/* ============================================================
-   P1-9: Page Transitions
-   ============================================================ */
-
-@keyframes page-enter {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
 /* page transition handled by GSAP per-component */
 
 /* ============================================================
-   P1-11: Skeleton Loading
+   21. Skeleton Loading
    ============================================================ */
 
 .skeleton {
@@ -719,12 +663,16 @@ body::before {
 }
 
 /* ============================================================
-   P0-1 helper: card-hover-glow shared class
+   22. Card Hover Glow
    ============================================================ */
 
 .card-hover-glow {
   filter: drop-shadow(0 0 16px rgba(155,140,255,0.7)) brightness(1.05) !important;
 }
+
+/* ============================================================
+   23. Reduced Motion
+   ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -732,6 +680,5 @@ body::before {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  body::before { animation: none !important; }
   main { animation: none !important; }
 }

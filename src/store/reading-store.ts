@@ -4,6 +4,9 @@ import type { ReadingCard, Reading, ReadingStatus } from '../types/reading';
 import type { Spread } from '../data/spreads';
 import { TAROT_CARDS } from '../data/tarot-cards';
 
+const REVERSED_PROBABILITY = 0.35;
+const MAX_HISTORY = 50;
+
 function uid(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
 }
@@ -84,7 +87,7 @@ export const useReadingStore = create<ReadingStore>()(
           id: cardId,
           positionIndex: nextPos.index,
           positionName: nextPos.nameZh,
-          reversed: Math.random() < 0.35,
+          reversed: Math.random() < REVERSED_PROBABILITY,
           revealed: false,
         };
 
@@ -128,7 +131,7 @@ export const useReadingStore = create<ReadingStore>()(
           result: aiResult,
           date: new Date().toISOString(),
         };
-        set({ history: [reading, ...history].slice(0, 50) });
+        set({ history: [reading, ...history].slice(0, MAX_HISTORY) });
       },
 
       clearHistory: () => set({ history: [] }),

@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 
 /**
  * Unified canvas: Particles + Shooting Stars + Constellation lines
- * Single RAF loop, DPI-aware, visibilitychange pause
+ * Single RAF loop, DPI-aware, visibilitychange + IntersectionObserver pause
  */
 export default function Particles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -18,6 +18,7 @@ export default function Particles() {
     let animId: number;
     let mouseX = -1000;
     let mouseY = -1000;
+    let isVisible = true;
 
     const dpr = window.devicePixelRatio || 1;
 
@@ -39,13 +40,14 @@ export default function Particles() {
     const COUNT = 80;
 
     function resize() {
+      if (!canvas || !ctx) return;
       const w = window.innerWidth;
       const h = window.innerHeight;
-      canvas!.width = w * dpr;
-      canvas!.height = h * dpr;
-      canvas!.style.width = w + 'px';
-      canvas!.style.height = h + 'px';
-      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     resize();
 
@@ -81,11 +83,12 @@ export default function Particles() {
       });
     }
 
-    function draw() {
-      const w = canvas!.width / dpr;
-      const h = canvas!.height / dpr;
-      ctx!.clearRect(0, 0, w, h);
-      const t = Date.now() * 0.001;
+    function draw(timestamp: number) {
+      if (!ctx || !canvas) return;
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+      ctx.clearRect(0, 0, w, h);
+      const t = timestamp * 0.001;
       // --- Nebula layer — slow-drifting soft gradients for depth ---
       const nebulae = [
         { baseX: w * 0.25, baseY: h * 0.35, r: w * 0.18, color: [100, 60, 180], speedX: 0.06, speedY: 0.04 },
@@ -95,15 +98,15 @@ export default function Particles() {
       for (const n of nebulae) {
         const ox = Math.sin(t * n.speedX) * 30;
         const oy = Math.cos(t * n.speedY) * 20;
-        const grad = ctx!.createRadialGradient(
+        const grad = ctx.createRadialGradient(
           n.baseX + ox, n.baseY + oy, 0,
           n.baseX + ox, n.baseY + oy, n.r
         );
         grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.025)`);
         grad.addColorStop(0.5, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.012)`);
         grad.addColorStop(1, 'transparent');
-        ctx!.fillStyle = grad;
-        ctx!.fillRect(0, 0, w, h);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
       }
 
       // --- Particles ---
@@ -138,23 +141,23 @@ export default function Particles() {
           : `rgba(155, 140, 255, ${p.opacity})`;
 
         if (p.size > 1.5) {
-          ctx!.beginPath();
-          ctx!.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
-          ctx!.fillStyle = p.hue === 1
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+          ctx.fillStyle = p.hue === 1
             ? `rgba(212, 175, 55, ${p.opacity * 0.15})`
             : `rgba(155, 140, 255, ${p.opacity * 0.15})`;
-          ctx!.fill();
+          ctx.fill();
         }
 
-        ctx!.beginPath();
-        ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx!.fillStyle = color;
-        ctx!.fill();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
       }
 
       // --- Constellation lines ---
       const LINE_DIST = 130;
-      ctx!.lineWidth = 0.5;
+      ctx.lineWidth = 0.5;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const a = particles[i], b = particles[j];
@@ -162,11 +165,11 @@ export default function Particles() {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < LINE_DIST) {
             const alpha = (1 - dist / LINE_DIST) * 0.12;
-            ctx!.beginPath();
-            ctx!.moveTo(a.x, a.y);
-            ctx!.lineTo(b.x, b.y);
-            ctx!.strokeStyle = `rgba(155, 140, 255, ${alpha})`;
-            ctx!.stroke();
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(155, 140, 255, ${alpha})`;
+            ctx.stroke();
           }
         }
       }
@@ -184,19 +187,19 @@ export default function Particles() {
         }
         const tailX = s.x - Math.cos(s.angle) * s.length;
         const tailY = s.y - Math.sin(s.angle) * s.length;
-        const grad = ctx!.createLinearGradient(tailX, tailY, s.x, s.y);
+        const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
         grad.addColorStop(0, 'transparent');
         grad.addColorStop(1, `rgba(255,255,255,${s.opacity})`);
-        ctx!.beginPath();
-        ctx!.moveTo(tailX, tailY);
-        ctx!.lineTo(s.x, s.y);
-        ctx!.strokeStyle = grad;
-        ctx!.lineWidth = 1.5;
-        ctx!.stroke();
-        ctx!.beginPath();
-        ctx!.arc(s.x, s.y, 2, 0, Math.PI * 2);
-        ctx!.fillStyle = `rgba(212,175,55,${s.opacity})`;
-        ctx!.fill();
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(s.x, s.y);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(212,175,55,${s.opacity})`;
+        ctx.fill();
       }
 
       animId = requestAnimationFrame(draw);
@@ -205,13 +208,28 @@ export default function Particles() {
     // Pause when tab hidden
     const onVis = () => {
       if (document.hidden) cancelAnimationFrame(animId);
-      else animId = requestAnimationFrame(draw);
+      else if (isVisible) animId = requestAnimationFrame(draw);
     };
     document.addEventListener('visibilitychange', onVis);
+
+    // IntersectionObserver: pause when canvas is off-screen
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (!isVisible) {
+          cancelAnimationFrame(animId);
+        } else if (!document.hidden) {
+          animId = requestAnimationFrame(draw);
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
 
     animId = requestAnimationFrame(draw);
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener('mousemove', onMouse);
       window.removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', onVis);
@@ -222,7 +240,7 @@ export default function Particles() {
     <canvas
       ref={canvasRef}
       className="pointer-events-none fixed inset-0"
-      style={{ opacity: 0.8, zIndex: 0 }}
+      style={{ opacity: 0.8, zIndex: 0, willChange: 'transform' }}
     />
   );
 }

@@ -177,7 +177,7 @@ export default function TarotCard({
       />
       <div ref={innerRef} className="w-full h-full relative" style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}>
         <div className="absolute inset-0 w-full h-full" style={{ backfaceVisibility: 'hidden' }}>
-          <CardBack size={size} />
+          <CardBack width={width} height={height} />
         </div>
         <div
           className={`absolute inset-0 w-full h-full rounded-lg overflow-hidden ${isRevealed ? 'shadow-[0_0_24px_rgba(212,175,55,0.5)]' : ''}`}

@@ -9,14 +9,51 @@ interface ReadingRequestBody {
   question: string;
 }
 
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 10;
+const RATE_WINDOW = 60 * 1000;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_WINDOW });
+    return true;
+  }
+
+  if (entry.count >= RATE_LIMIT) {
+    return false;
+  }
+
+  entry.count++;
+  return true;
+}
+
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { error: '请求过于频繁，请稍后再试' },
+        { status: 429 }
+      );
+    }
+
     const body: ReadingRequestBody = await request.json();
     const { spreadType, cards, question } = body;
 
-    if (!cards || cards.length === 0 || !question) {
+    if (!cards || !Array.isArray(cards) || cards.length === 0) {
       return NextResponse.json(
-        { error: '请提供塔罗牌信息和您的问题' },
+        { error: '请提供塔罗牌信息' },
+        { status: 400 }
+      );
+    }
+
+    if (!question || typeof question !== 'string' || question.trim().length === 0) {
+      return NextResponse.json(
+        { error: '请输入您的问题' },
         { status: 400 }
       );
     }
@@ -32,7 +69,6 @@ export async function POST(request: NextRequest) {
 
     const baseUrl = process.env.AI_BASE_URL || 'https://api.openai.com/v1';
     const model = process.env.AI_MODEL || 'gpt-4o-mini';
-
 
     const messages = buildPrompt(cards, question);
 
@@ -59,7 +95,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Stream the SSE response directly to the client
     const stream = new ReadableStream({
       async start(controller) {
         const reader = response.body?.getReader();
@@ -91,7 +126,6 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache, no-transform',
         Connection: 'keep-alive',
-        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
@@ -108,7 +142,6 @@ export async function POST(request: NextRequest) {
 export async function OPTIONS() {
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },

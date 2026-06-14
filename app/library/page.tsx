@@ -1,11 +1,11 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { TAROT_CARDS } from '@/src/data/tarot-cards';
-import type { TarotCard } from '@/src/data/tarot-cards';
 import TarotCardComponent from '@/app/components/tarot/TarotCard';
+import Modal from '@/app/components/ui/Modal';
 
 const categories = [
   { id: 'all', label: '全部' },
@@ -51,7 +51,6 @@ export default function LibraryPage() {
 
   return (
     <div ref={containerRef} className="relative min-h-screen px-4 py-24 sm:px-6">
-      {/* Page ambient — deep purple-blue atmosphere */}
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0"
@@ -94,69 +93,38 @@ export default function LibraryPage() {
         </div>
 
         {detail && (
-          <DetailModal detail={detail} onClose={() => setSelectedCard(null)} />
+          <Modal
+            isOpen={!!selectedCard}
+            onClose={() => setSelectedCard(null)}
+            className="glass-panel max-w-lg w-full p-6"
+            aria-label={`查看${detail.nameZh}详情`}
+          >
+            <div className="flex gap-4">
+              <div className="w-32 flex-shrink-0">
+                <TarotCardComponent card={detail} isRevealed={true} size="sm" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-display-alt text-lg tracking-wider text-frost">{detail.nameZh}</h3>
+                <p className="text-xs text-muted">{detail.nameEn}</p>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {detail.keywords.map((k: string) => (
+                    <span key={k} className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] text-accent-soft">{k}</span>
+                  ))}
+                </div>
+                <p className="mt-3 text-xs leading-relaxed text-metal">{detail.description}</p>
+                <div className="mt-3">
+                  <p className="text-[10px] font-medium text-gold">正位：{detail.upright.meaning}</p>
+                  <p className="text-[10px] text-muted mt-1">{detail.upright.advice}</p>
+                </div>
+                <div className="mt-2">
+                  <p className="text-[10px] font-medium text-violet-400">逆位：{detail.reversed.meaning}</p>
+                  <p className="text-[10px] text-muted mt-1">{detail.reversed.advice}</p>
+                </div>
+              </div>
+            </div>
+            <button onClick={() => setSelectedCard(null)} className="glass-button mt-4 w-full">关闭</button>
+          </Modal>
         )}
-      </div>
-    </div>
-  );
-}
-
-function DetailModal({ detail, onClose }: { detail: TarotCard; onClose: () => void }) {
-  const backdropRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    panelRef.current?.querySelector<HTMLElement>('button')?.focus();
-    return () => document.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
-  useGSAP(() => {
-    if (!backdropRef.current || !panelRef.current) return;
-    gsap.fromTo(backdropRef.current, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' });
-    gsap.fromTo(panelRef.current, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'power3.out' });
-  }, { scope: backdropRef });
-
-  return (
-    <div
-      ref={backdropRef}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-4"
-      style={{ opacity: 0 }}
-      onClick={onClose}
-    >
-      <div
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label={`查看${detail.nameZh}详情`}
-        className="glass-panel max-w-lg w-full p-6"
-        style={{ opacity: 0, willChange: 'transform' }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex gap-4">
-          <div className="w-32 flex-shrink-0">
-            <TarotCardComponent card={detail} isRevealed={true} size="sm" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-display-alt text-lg tracking-wider text-frost">{detail.nameZh}</h3>
-            <p className="text-xs text-muted">{detail.nameEn}</p>
-            <div className="mt-2 flex flex-wrap gap-1">
-              {detail.keywords.map((k: string) => (
-                <span key={k} className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] text-accent-soft">{k}</span>
-              ))}
-            </div>
-            <p className="mt-3 text-xs leading-relaxed text-metal">{detail.description}</p>
-            <div className="mt-3">
-              <p className="text-[10px] font-medium text-gold">正位：{detail.upright.meaning}</p>
-              <p className="text-[10px] text-muted mt-1">{detail.upright.advice}</p>
-            </div>
-            <div className="mt-2">
-              <p className="text-[10px] font-medium text-violet-400">逆位：{detail.reversed.meaning}</p>
-              <p className="text-[10px] text-muted mt-1">{detail.reversed.advice}</p>
-            </div>
-          </div>
-        </div>
-        <button onClick={onClose} className="glass-button mt-4 w-full">关闭</button>
       </div>
     </div>
   );

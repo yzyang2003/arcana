@@ -10,6 +10,14 @@ export interface ReadingCard {
   revealed: boolean;
 }
 
+export type AIReadingCard = {
+  cardId: string;
+  positionName: string;
+  isReversed: boolean;
+  cardNameZh: string;
+  cardNameEn?: string;
+};
+
 export interface Reading {
   id: string;
   spread: Spread;
