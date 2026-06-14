@@ -6,6 +6,7 @@ import { useGSAP } from '@gsap/react';
 import { SplitText } from 'gsap/SplitText';
 import { TAROT_CARDS } from '@/src/data/tarot-cards';
 import TarotCard from '@/app/components/tarot/TarotCard';
+import { shareResult } from '@/src/lib/share';
 
 gsap.registerPlugin(SplitText);
 
@@ -185,6 +186,16 @@ function RevealDetails({ card, reversed }: { card: (typeof TAROT_CARDS)[number];
         </p>
         <p className="mt-1 text-xs text-muted">{reversed ? card.reversed.advice : card.upright.advice}</p>
       </div>
+      <button
+        onClick={async () => {
+          const title = 'Arcana 每日一牌 — ' + card.nameZh;
+          const text = card.nameZh + (reversed ? '(逆位)' : '') + '：' + (reversed ? card.reversed.meaning : card.upright.meaning);
+          await shareResult({ title, text });
+        }}
+        className="glass-button mt-4 w-full py-2 text-sm"
+      >
+        分享今日牌
+      </button>
     </div>
   );
 }

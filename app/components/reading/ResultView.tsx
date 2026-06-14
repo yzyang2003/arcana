@@ -8,6 +8,7 @@ import { SplitText } from 'gsap/SplitText';
 import { readSSEStream } from '@/src/lib/sse';
 import { useReadingStore } from '@/src/store/reading-store';
 import { getCardById } from '@/src/data/tarot-cards';
+import { shareResult } from '@/src/lib/share';
 import dynamic from 'next/dynamic';
 
 const CelebrationParticles = dynamic(() => import('@/app/components/effects/CelebrationParticles'), { ssr: false });
@@ -32,6 +33,7 @@ export default function ResultView({ spread, drawnCards, status, aiResult, error
   const [streamText, setStreamText] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [celebrating, setCelebrating] = useState(false);
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'shared'>('idle');
   const streamRef = useRef(false);
   const celebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -126,6 +128,20 @@ export default function ResultView({ spread, drawnCards, status, aiResult, error
     };
   }, []);
 
+  const handleShare = async () => {
+    const text = streamText || aiResult;
+    if (!text) return;
+    const cardNames = drawnCards.map((dc) => {
+      const card = getCardById(dc.id);
+      return dc.reversed ? `${card?.nameZh || dc.id}(逆位)` : card?.nameZh || dc.id;
+    }).join('、');
+    const title = `Arcana 塔罗解读 — ${spread.nameZh}`;
+    const body = `${cardNames}\n\n${text.slice(0, 200)}${text.length > 200 ? '...' : ''}`;
+    const ok = await shareResult({ title, text: body, url: window.location.origin });
+    setShareStatus(ok ? 'shared' : 'copied');
+    setTimeout(() => setShareStatus('idle'), 2000);
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-4">
       <CelebrationParticles active={celebrating} />
@@ -180,6 +196,9 @@ export default function ResultView({ spread, drawnCards, status, aiResult, error
             {status === 'complete' && (
               <div className="mt-4 flex gap-3">
                 <button onClick={() => { reset(); router.push('/reading'); }} className="glass-button flex-1 py-2 text-sm">重新占卜</button>
+                <button onClick={handleShare} className="glass-button flex-1 py-2 text-sm">
+                  {shareStatus === 'shared' ? '已分享' : shareStatus === 'copied' ? '已复制' : '分享解读'}
+                </button>
                 <button onClick={() => router.push('/history')} className="accent-button flex-1 py-2 text-sm">查看记录</button>
               </div>
             )}
