@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.AI_BASE_URL || 'https://api.openai.com/v1';
     const model = process.env.AI_MODEL || 'gpt-4o-mini';
 
-    const messages = buildPrompt(cards, question);
+    const messages = buildPrompt(cards, question, spreadType);
 
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',

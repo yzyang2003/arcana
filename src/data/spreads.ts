@@ -323,7 +323,69 @@ export const spreads: Spread[] = [
     ],
   },
 
-  // 6. 关系牌阵
+  // 6. 寻物牌阵
+  {
+    id: 'lost-item',
+    nameZh: '寻物牌阵',
+    nameEn: 'Lost Item',
+    description: '5张牌呈倒V字排列，专门用于寻找丢失物品。揭示丢失原因、物品状态、方位线索、阻碍因素和找回建议。',
+    cardCount: 5,
+    difficulty: 'intermediate',
+    positions: [
+      {
+        index: 0,
+        nameZh: '丢失原因',
+        nameEn: 'Cause',
+        description: '物品为什么会丢失，背后的原因或能量',
+        x: 50,
+        y: 10,
+        rotation: 0,
+        zIndex: 1,
+      },
+      {
+        index: 1,
+        nameZh: '物品状态',
+        nameEn: 'Condition',
+        description: '物品当前的状态，是否完好、被遮盖等',
+        x: 30,
+        y: 40,
+        rotation: 0,
+        zIndex: 2,
+      },
+      {
+        index: 2,
+        nameZh: '方位线索',
+        nameEn: 'Location',
+        description: '物品所处的方位、环境特征（结合元素判断）',
+        x: 70,
+        y: 40,
+        rotation: 0,
+        zIndex: 3,
+      },
+      {
+        index: 3,
+        nameZh: '阻碍因素',
+        nameEn: 'Obstacle',
+        description: '为什么找不到，什么在阻碍你的寻找',
+        x: 35,
+        y: 75,
+        rotation: 0,
+        zIndex: 4,
+      },
+      {
+        index: 4,
+        nameZh: '找回建议',
+        nameEn: 'Advice',
+        description: '如何找回物品，行动建议和时机提示',
+        x: 65,
+        y: 75,
+        rotation: 0,
+        zIndex: 5,
+      },
+    ],
+  },
+
+  // 7. 关系牌阵
   {
     id: 'relationship',
     nameZh: '关系牌阵',

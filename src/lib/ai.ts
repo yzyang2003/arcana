@@ -44,9 +44,22 @@ export interface PromptMessages {
   content: string;
 }
 
+const SPREAD_GUIDANCE: Record<string, string> = {
+  'lost-item': `
+## 寻物牌阵特殊指引
+这是一个专门用于寻找丢失物品的牌阵。请特别注意：
+1. **方位解读**：根据牌面元素判断方位——火=南方/左前方，水=北方/右后方，风=西方/左方，土=东方/右方。宫廷牌可提示人物特征（谁拿走了/谁看到了）。
+2. **物品状态**：判断物品是否完好、是否被遮盖/压住、是否在某个容器里。
+3. **环境特征**：结合数字牌的场景——1=新位置，2=靠近水源/镜子，3=与人相关，4=固定场所，5=混乱区域，6=有序区域，7=隐蔽角落，8=移动中，9=私密空间，10=公共区域。
+4. **阻碍分析**：解释为什么暂时找不到，是物理遮挡、位置偏差还是时机未到。
+5. **行动建议**：给出具体的寻找方向和时机建议。
+`,
+};
+
 export function buildPrompt(
   cards: ReadingCard[],
-  question: string
+  question: string,
+  spreadType?: string
 ): PromptMessages[] {
   const cardList = cards
     .map((card, index) => {
@@ -55,13 +68,17 @@ export function buildPrompt(
     })
     .join('\n');
 
+  const spreadGuide = spreadType && SPREAD_GUIDANCE[spreadType]
+    ? `\n\n${SPREAD_GUIDANCE[spreadType]}`
+    : '';
+
   const userMessage = `求问者的问题是：「${question}」
 
 以下是牌阵中出现的牌：
 
 ${cardList}
 
-请根据以上牌阵，为求问者提供一份详细、温暖且富有洞察力的塔罗解读。`;
+请根据以上牌阵，为求问者提供一份详细、温暖且富有洞察力的塔罗解读。${spreadGuide}`;
 
   return [
     { role: 'system', content: TAROT_SYSTEM_PROMPT },
